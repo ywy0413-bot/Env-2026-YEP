@@ -9,17 +9,17 @@ module.exports = [
   // ══════════════════════════════════════════════
   {
     id: 1, type: 'multiple', difficulty: 1,
-    question: '대한민국의 수도는?',
-    choices: ['부산', '서울', '인천', '대전'],
+    question: '다음 중 한국에서 가장 먼저 출시된 라면은?',
+    choices: ['신라면', '삼양라면', '짜파게티', '너구리'],
     answer: 1, timeLimit: 15,
-    explanation: '서울은 1394년 조선 건국 이래 수도로, 현재 인구 약 950만 명의 대한민국 최대 도시입니다.'
+    explanation: '삼양라면은 1963년 출시된 한국 최초의 라면입니다. 너구리는 1982년, 짜파게티는 1984년, 신라면은 1986년에 출시됐습니다.'
   },
   {
     id: 2, type: 'multiple', difficulty: 1,
-    question: '한국의 국화(나라꽃)는?',
-    choices: ['장미', '벚꽃', '진달래', '무궁화'],
-    answer: 3, timeLimit: 15,
-    explanation: '무궁화는 "영원히 피고 또 피어서 지지 않는 꽃"이라는 뜻으로 애국가 가사에도 등장합니다.'
+    question: '다음 중 한국에서 가장 먼저 출시된 과자는?',
+    choices: ['초코파이', '새우깡', '포카칩', '빠다코코낫'],
+    answer: 1, timeLimit: 15,
+    explanation: '새우깡은 1971년 농심(당시 롯데공업)이 출시한 한국 최장수 과자 중 하나입니다. 초코파이(1974), 빠다코코낫(1975), 포카칩(1988) 순으로 뒤를 이었습니다.'
   },
   {
     id: 3, type: 'multiple', difficulty: 1,
@@ -79,10 +79,10 @@ module.exports = [
   },
   {
     id: 11, type: 'multiple', difficulty: 1,
-    question: '삼일절은 몇 월 며칠인가?',
-    choices: ['1월 1일', '3월 1일', '8월 15일', '10월 3일'],
-    answer: 1, timeLimit: 15,
-    explanation: '1919년 3월 1일 일제에 맞서 독립만세운동이 일어났습니다. 전국 약 200만 명이 참여한 역사적 사건으로, 현재 공휴일로 기념합니다.'
+    question: '초코파이를 처음 만든 회사는?',
+    choices: ['오리온', '롯데', '해태', '크라운'],
+    answer: 0, timeLimit: 15,
+    explanation: '초코파이는 1974년 오리온(당시 동양제과)이 처음 출시했습니다. 롯데도 초코파이를 만들지만 원조는 오리온입니다. 많은 사람들이 롯데 제품으로 착각합니다.'
   },
   {
     id: 12, type: 'ox', difficulty: 1,
@@ -141,11 +141,11 @@ module.exports = [
     explanation: '숭례문(남대문)이 국보 1호입니다. 2008년 화재로 소실되었다가 2013년 복원되었습니다. 참고로 2021년 "국보 1호" 호칭 제도 자체가 폐지되었습니다.'
   },
   {
-    id: 20, type: 'ox', difficulty: 1,
-    question: '세종대왕의 얼굴이 그려진 지폐는 1만 원권이다.',
-    choices: ['O', 'X'],
-    answer: 0, timeLimit: 15,
-    explanation: '세종대왕은 1만 원권 지폐의 인물입니다. 5천 원권은 율곡 이이, 1천 원권은 퇴계 이황, 5만 원권은 신사임당입니다.'
+    id: 20, type: 'multiple', difficulty: 1,
+    question: '다음 음료 중 한국에서 가장 먼저 출시된 것은?',
+    choices: ['코카콜라', '칠성사이다', '레드불', '게토레이'],
+    answer: 1, timeLimit: 15,
+    explanation: '칠성사이다는 1950년에 출시된 한국 최초의 탄산음료입니다. 코카콜라는 1968년, 게토레이는 1973년에 한국에 출시됐습니다.'
   },
 
   // ══════════════════════════════════════════════
@@ -304,10 +304,10 @@ module.exports = [
   },
   {
     id: 42, type: 'multiple', difficulty: 3,
-    question: '한국이 FIFA 월드컵에 총 몇 번 출전했나? (2022 카타르 기준)',
-    choices: ['8회', '9회', '10회', '11회'],
-    answer: 3, timeLimit: 15,
-    explanation: '1954년부터 2022년까지 한국은 총 11회 월드컵 본선에 출전했습니다. 아시아에서 가장 많이 본선에 출전한 나라 중 하나입니다.'
+    question: '농심 라면을 출시 순서로 나열할 때 세 번째로 나온 것은?',
+    choices: ['신라면', '짜파게티', '너구리', '안성탕면'],
+    answer: 1, timeLimit: 15,
+    explanation: '너구리(1982) → 안성탕면(1983) → 짜파게티(1984) → 신라면(1986) 순으로 출시됐습니다. 세 번째는 짜파게티입니다.'
   },
   {
     id: 43, type: 'multiple', difficulty: 3,
@@ -381,10 +381,10 @@ module.exports = [
   },
   {
     id: 53, type: 'multiple', difficulty: 3,
-    question: '"대동여지도"를 제작한 조선의 지리학자는?',
-    choices: ['정약용', '안정복', '김정호', '이익'],
-    answer: 2, timeLimit: 15,
-    explanation: '김정호가 1861년 제작한 대동여지도는 분첩식 목판 지도로, 당시 세계 수준의 정밀도를 자랑합니다. 22첩으로 나뉘어 실용적으로 사용할 수 있습니다.'
+    question: '다음 과자 중 출시 연도가 가장 늦은 것은?',
+    choices: ['새우깡', '초코파이', '빼빼로', '포카칩'],
+    answer: 3, timeLimit: 15,
+    explanation: '포카칩은 1988년 농심이 출시한 감자칩입니다. 새우깡(1971), 초코파이(1974), 빼빼로(1983)보다 늦게 출시됐습니다.'
   },
   {
     id: 54, type: 'multiple', difficulty: 3,
