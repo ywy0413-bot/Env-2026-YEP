@@ -358,6 +358,9 @@ io.on('connection', (socket) => {
   });
 });
 
+// ─── 헬스체크 ─────────────────────────────────────────────────
+app.get('/health', (req, res) => res.json({ status: 'ok', players: Object.keys(game.players).length }));
+
 // ─── 서버 시작 ────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
@@ -365,4 +368,15 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`   참가자: http://localhost:${PORT}`);
   console.log(`   어드민: http://localhost:${PORT}/admin.html`);
   console.log(`   어드민 비밀번호: admin1234\n`);
+
+  // Render free tier sleep 방지: 14분마다 자기 자신에게 핑
+  const selfUrl = process.env.RENDER_EXTERNAL_URL;
+  if (selfUrl) {
+    setInterval(() => {
+      fetch(`${selfUrl}/health`)
+        .then(() => console.log('[핑] keep-alive 성공'))
+        .catch(e => console.log('[핑] keep-alive 실패:', e.message));
+    }, 14 * 60 * 1000);
+    console.log(`   Keep-alive 핑 활성화: ${selfUrl}/health`);
+  }
 });
