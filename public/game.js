@@ -123,8 +123,8 @@ function updateHeartsDisplay() {
 }
 
 // ── 로그인 ───────────────────────────────────────────
-$joinBtn.addEventListener('click', joinGame);
-$pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
+$joinBtn.addEventListener('click', () => { getActx(); joinGame(); });
+$pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') { getActx(); joinGame(); } });
 
 function joinGame() {
   const empId   = Number($empSelect.value);
@@ -186,6 +186,7 @@ socket.on('game:countdown', ({ count }) => {
   $countdownNum.style.animation = 'none';
   void $countdownNum.offsetWidth;
   $countdownNum.style.animation = '';
+  sfxCountdownBeep(count === 1);
 });
 
 // ── 문제 수신 ────────────────────────────────────────
@@ -269,7 +270,13 @@ function startTimer(total, remaining) {
     const pct = state.timerRemaining / total;
     $timerArc.style.strokeDashoffset = CIRC * (1 - pct);
     $timerText.textContent = state.timerRemaining;
-    if (state.timerRemaining <= 5) $timerArc.classList.add('urgent');
+    if (state.timerRemaining <= 5) {
+      $timerArc.classList.add('urgent');
+      if (state.timerRemaining > 0) sfxTick(true);
+      else sfxTimeUp();
+    } else {
+      sfxTick(false);
+    }
     if (state.timerRemaining <= 0) clearInterval(state.timerInterval);
   }, 1000);
 }
@@ -296,10 +303,12 @@ socket.on('game:reveal', ({ correctIndex, correctText, explanation, results, eli
     $revealIcon.textContent = '✅';
     $revealText.textContent = '정답!';
     $revealText.className = 'reveal-result-text correct';
+    setTimeout(sfxCorrect, 200);
   } else {
     $revealIcon.textContent = '❌';
     $revealText.textContent = '오답!';
     $revealText.className = 'reveal-result-text wrong';
+    setTimeout(sfxWrong, 200);
   }
 
   showScreen('reveal');
@@ -396,4 +405,65 @@ function escHtml(str) {
   return String(str).replace(/[&<>"']/g, m =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
   );
+}
+
+// ── 효과음 (Web Audio API) ────────────────────────────
+let _actx = null;
+function getActx() {
+  if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_actx.state === 'suspended') _actx.resume();
+  return _actx;
+}
+
+function playTone(freq, type, duration, vol, delay = 0) {
+  try {
+    const ctx = getActx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + delay;
+    gain.gain.setValueAtTime(vol, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+    osc.start(t);
+    osc.stop(t + duration + 0.05);
+  } catch (_) {}
+}
+
+function sfxTick(urgent) {
+  if (urgent) playTone(900, 'square', 0.07, 0.25);
+  else        playTone(500, 'sine',   0.07, 0.12);
+}
+
+function sfxTimeUp() {
+  playTone(180, 'sawtooth', 0.6, 0.4);
+}
+
+function sfxCountdownBeep(isLast) {
+  playTone(isLast ? 880 : 660, 'sine', 0.2, 0.35);
+}
+
+function sfxCorrect() {
+  [[523, 0], [659, 0.11], [784, 0.22], [1047, 0.34]].forEach(([f, d]) =>
+    playTone(f, 'sine', 0.3, 0.32, d)
+  );
+}
+
+function sfxWrong() {
+  try {
+    const ctx = getActx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(280, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.55);
+    gain.gain.setValueAtTime(0.38, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.75);
+  } catch (_) {}
 }
