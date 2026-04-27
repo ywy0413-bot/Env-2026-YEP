@@ -68,22 +68,12 @@ async function loadEmployees() {
   try {
     const res = await fetch('/api/employees');
     const list = await res.json();
-    // 그룹별 정렬
-    const grouped = {};
+    list.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
     list.forEach(e => {
-      if (!grouped[e.group]) grouped[e.group] = [];
-      grouped[e.group].push(e);
-    });
-    Object.entries(grouped).forEach(([group, members]) => {
-      const og = document.createElement('optgroup');
-      og.label = group;
-      members.forEach(e => {
-        const opt = document.createElement('option');
-        opt.value = e.id;
-        opt.textContent = e.name;
-        og.appendChild(opt);
-      });
-      $empSelect.appendChild(og);
+      const opt = document.createElement('option');
+      opt.value = e.id;
+      opt.textContent = e.name;
+      $empSelect.appendChild(opt);
     });
   } catch (e) {
     console.error('임직원 목록 로드 실패:', e);
@@ -205,11 +195,8 @@ socket.on('game:question', ({ index, total, type, question, choices, timeLimit, 
   state.questionTimeLimit = timeLimit;
   state.currentChoice  = null;
 
-  if (state.eliminated) {
-    const pct = ((index + 1) / total) * 100;
-    $epBar.style.width = pct + '%';
-    return;
-  }
+  const isSpectator = state.eliminated;
+  document.getElementById('spectator-banner').classList.toggle('hidden', !isSpectator);
 
   $qIndex.textContent = index + 1;
   $qTotal.textContent = total;
@@ -224,17 +211,16 @@ socket.on('game:question', ({ index, total, type, question, choices, timeLimit, 
   choices.forEach((text, i) => {
     const btn = document.createElement('button');
     if (type === 'ox') {
-      btn.className = `choice-btn choice-ox-${i}`;
+      btn.className = `choice-btn choice-ox-${i}${isSpectator ? ' disabled' : ''}`;
       btn.innerHTML = `<span class="choice-text">${escHtml(text)}</span>`;
     } else {
-      btn.className = `choice-btn choice-${i}`;
+      btn.className = `choice-btn choice-${i}${isSpectator ? ' disabled' : ''}`;
       btn.innerHTML = `<span class="choice-label">${LABELS[i]}</span><span class="choice-text">${escHtml(text)}</span>`;
     }
-    btn.addEventListener('click', () => submitAnswer(i, text));
+    if (!isSpectator) btn.addEventListener('click', () => submitAnswer(i, text));
     $choicesWrap.appendChild(btn);
   });
 
-  // 재연결 시 이미 경과된 시간 반영
   const remaining = Math.max(0, timeLimit - (elapsed || 0));
   startTimer(timeLimit, remaining);
   showScreen('question');
@@ -291,7 +277,6 @@ function startTimer(total, remaining) {
 // ── 정답 공개 ────────────────────────────────────────
 socket.on('game:reveal', ({ correctIndex, correctText, results, eliminated, revived, aliveCount }) => {
   clearInterval(state.timerInterval);
-  if (state.eliminated) return;
 
   const myResult = results[state.employeeId];
   const isCorrect = myResult?.correct;
@@ -300,7 +285,11 @@ socket.on('game:reveal', ({ correctIndex, correctText, results, eliminated, revi
   $revealStats.textContent = `생존자 ${aliveCount}명`;
   $revealHeartMsg.classList.add('hidden');
 
-  if (isCorrect || myResult === undefined) {
+  if (state.eliminated) {
+    $revealIcon.textContent = '👁';
+    $revealText.textContent = '관람 중';
+    $revealText.className = 'reveal-result-text spectator';
+  } else if (isCorrect) {
     $revealIcon.textContent = '✅';
     $revealText.textContent = '정답!';
     $revealText.className = 'reveal-result-text correct';
@@ -319,9 +308,13 @@ socket.on('player:eliminated', () => {
   state.hearts = 0;
   updateHeartsDisplay();
 
+  // 잠시 탈락 화면을 보여준 뒤 관람 모드(정답 공개 화면)로 전환
+  showScreen('eliminated');
   setTimeout(() => {
-    showScreen('eliminated');
-    $epBar.style.width = ((state.questionIndex + 1) / state.totalQuestions * 100) + '%';
+    $revealIcon.textContent = '👁';
+    $revealText.textContent = '관람 중';
+    $revealText.className = 'reveal-result-text spectator';
+    showScreen('reveal');
   }, 2500);
 });
 

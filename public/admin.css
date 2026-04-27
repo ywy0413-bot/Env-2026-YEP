@@ -198,6 +198,9 @@ html, body { height: 100%; font-family: 'Apple SD Gothic Neo','Noto Sans KR',-ap
 .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
 .modal-actions .ctrl-btn { flex: 1; }
 
+/* ── 생존 현황 공개 버튼 ────────────────────────────── */
+.ctrl-btn.reveal-stats-btn { background: linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-size:17px; padding:14px 32px; margin:0 auto; display:block; }
+
 /* ── QR 코드 ─────────────────────────────────────── */
 .qr-img { width: 200px; height: 200px; border-radius: 12px; background: #fff; padding: 8px; display: block; margin: 16px auto 8px; }
 .qr-img[src=""] { display: none; }

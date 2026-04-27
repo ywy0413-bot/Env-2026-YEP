@@ -332,6 +332,21 @@ html, body {
 .winner-score { font-size: 15px; color: var(--gold); font-weight: 700; }
 .finish-my-result { padding: 16px; background: var(--bg2); border-radius: var(--radius); width: 100%; font-size: 16px; color: var(--muted); }
 
+/* ── 관람 모드 ─────────────────────────────────── */
+.spectator-banner {
+  width: 100%;
+  background: rgba(245,158,11,0.15);
+  border-bottom: 2px solid var(--gold);
+  color: var(--gold);
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.reveal-result-text.spectator { color: var(--gold); }
+
 /* ── 반응형 (큰 화면) ── */
 @media (min-width: 480px) {
   .question-text { font-size: 22px; }

@@ -254,13 +254,7 @@ function revealAnswer() {
     if (p) io.to(p.socketId).emit('player:revived');
   });
 
-  setTimeout(() => {
-    if (getAlivePlayers().length === 0 || game.currentIndex === game.selectedQuestions.length - 1) {
-      endGame();
-    } else {
-      nextQuestion();
-    }
-  }, 6000);
+  // 자동 진행 제거 — 관리자가 admin:next로 수동 진행
 }
 
 function endGame() {
@@ -376,7 +370,7 @@ io.on('connection', (socket) => {
   });
 
   // ── 어드민 명령 ─────────────────────────────────────────────
-  const ADMIN_PW = process.env.ADMIN_PW || 'admin1234';
+  const ADMIN_PW = process.env.ADMIN_PW || '1fbyep';
 
   socket.on('admin:start', ({ password }) => {
     if (password !== ADMIN_PW) { socket.emit('admin:error', { message: '비밀번호가 틀렸습니다.' }); return; }
@@ -459,7 +453,7 @@ io.on('connection', (socket) => {
 
 // ─── 직원 목록 내보내기 (어드민 전용) ────────────────────────
 app.get('/api/employees/export', (req, res) => {
-  const ADMIN_PW = process.env.ADMIN_PW || 'admin1234';
+  const ADMIN_PW = process.env.ADMIN_PW || '1fbyep';
   if (req.query.key !== ADMIN_PW) { res.status(401).json({ error: 'Unauthorized' }); return; }
   res.setHeader('Content-Disposition', 'attachment; filename="employees.json"');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');

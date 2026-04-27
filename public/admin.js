@@ -224,7 +224,11 @@ socket.on('game:reveal', ({ correctIndex, correctText, results, eliminated, revi
   document.getElementById('rs-elim').textContent = eliminated.length;
   document.getElementById('rs-revived').textContent = revived.length;
 
-  // 참가자 목록 갱신 (탈락 처리)
+  // 생존 현황은 버튼 클릭 시 공개
+  document.getElementById('reveal-summary').classList.add('hidden');
+  document.getElementById('btn-reveal-stats').classList.remove('hidden');
+
+  // 사이드바 통계 갱신
   document.getElementById('stat-alive').textContent = aliveCount;
 
   showPanel('reveal');
@@ -428,6 +432,12 @@ document.getElementById('btn-export-json').addEventListener('click', () => {
   a.href = url;
   a.download = 'employees.json';
   a.click();
+});
+
+// ── 생존 현황 공개 버튼 ──────────────────────────────────────
+document.getElementById('btn-reveal-stats').addEventListener('click', () => {
+  document.getElementById('reveal-summary').classList.remove('hidden');
+  document.getElementById('btn-reveal-stats').classList.add('hidden');
 });
 
 // ── 결과 모달 ───────────────────────────────────────────────
