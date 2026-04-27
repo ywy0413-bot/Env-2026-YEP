@@ -467,6 +467,62 @@ app.get('/api/employees/export', (req, res) => {
   res.json(employees);
 });
 
+// ─── 문제 목록 미리보기 (관리자 전용) ────────────────────────
+app.get('/questions-preview', (req, res) => {
+  const ADMIN_PW = process.env.ADMIN_PW || '1fbyep';
+  if (req.query.key !== ADMIN_PW) {
+    res.status(401).send('<h2>비밀번호가 필요합니다. ?key=비밀번호 를 URL에 추가하세요.</h2>');
+    return;
+  }
+  const DIFF_LABEL = { 1: '⭐ 난이도 1 — 매우 쉬움', 2: '⭐⭐ 난이도 2 — 쉬움', 3: '⭐⭐⭐ 난이도 3 — 보통', 4: '⭐⭐⭐⭐ 난이도 4 — 어려움', 5: '⭐⭐⭐⭐⭐ 난이도 5 — 매우 어려움' };
+  const TYPE_LABEL = { multiple: '4지선다', triple: '3지선다', ox: 'O/X' };
+  const LABELS = ['A', 'B', 'C', 'D'];
+
+  let rows = '';
+  for (let d = 1; d <= 5; d++) {
+    const group = questions.filter(q => q.difficulty === d);
+    rows += `<tr><td colspan="6" class="diff-header">${DIFF_LABEL[d]} (${group.length}문제)</td></tr>`;
+    group.forEach((q, i) => {
+      const choicesHtml = q.choices.map((c, ci) => {
+        const label = q.type === 'ox' ? c : `${LABELS[ci]}. ${c}`;
+        return `<span class="${ci === q.answer ? 'ans' : ''}">${label}</span>`;
+      }).join('&nbsp;&nbsp;');
+      rows += `<tr>
+        <td class="num">${i + 1}</td>
+        <td class="type">${TYPE_LABEL[q.type]}</td>
+        <td class="qtext">${q.question}</td>
+        <td class="choices">${choicesHtml}</td>
+        <td class="exp">${q.explanation || ''}</td>
+        <td class="tl">${q.timeLimit}초</td>
+      </tr>`;
+    });
+  }
+
+  res.send(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/>
+<title>문제 목록 (총 ${questions.length}문제)</title>
+<style>
+  body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#0f0e17;color:#f1f5f9;margin:0;padding:20px;}
+  h1{font-size:22px;margin-bottom:16px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{background:#1a1928;padding:10px 12px;text-align:left;color:#94a3b8;font-weight:600;border-bottom:2px solid #2d2b50;}
+  td{padding:10px 12px;border-bottom:1px solid #1e1d35;vertical-align:top;}
+  tr:hover td{background:#1a1928;}
+  .diff-header{background:#2d2b50;font-weight:800;font-size:14px;color:#a855f7;padding:14px 12px;}
+  .num{width:36px;color:#64748b;text-align:center;}
+  .type{width:72px;color:#94a3b8;}
+  .qtext{width:28%;font-weight:600;line-height:1.5;}
+  .choices{width:32%;line-height:1.8;}
+  .exp{color:#93c5fd;line-height:1.55;}
+  .tl{width:44px;text-align:center;color:#94a3b8;}
+  .ans{color:#10b981;font-weight:800;}
+</style></head><body>
+<h1>📋 문제 목록 — 총 ${questions.length}문제 (난이도별 20문제)</h1>
+<table>
+  <thead><tr><th>#</th><th>유형</th><th>문제</th><th>선택지 (초록=정답)</th><th>해설</th><th>제한</th></tr></thead>
+  <tbody>${rows}</tbody>
+</table></body></html>`);
+});
+
 // ─── QR 코드 생성 ────────────────────────────────────────────
 app.get('/api/qrcode', async (req, res) => {
   const baseUrl = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
