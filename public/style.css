@@ -285,6 +285,7 @@ html, body {
   width: 100%;
 }
 .reveal-stats { color: var(--muted); font-size: 16px; }
+.reveal-explanation { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.35); border-radius: var(--radius); padding: 12px 18px; font-size: 14px; color: #93c5fd; line-height: 1.55; width: 100%; text-align: left; }
 .reveal-heart-msg { background: rgba(239,68,68,0.15); border: 1px solid var(--red); border-radius: var(--radius); padding: 10px 20px; color: #fca5a5; font-size: 15px; font-weight: 700; }
 .reveal-next-hint { color: var(--muted); font-size: 14px; }
 

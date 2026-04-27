@@ -74,13 +74,19 @@ function getAlivePlayers() {
   return Object.values(game.players).filter(p => p.alive);
 }
 
-function selectRandomQuestions(count = 20) {
-  const shuffled = [...questions];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+function selectRandomQuestions(perDifficulty = 5) {
+  const byDiff = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+  questions.forEach(q => { if (byDiff[q.difficulty]) byDiff[q.difficulty].push(q); });
+  const selected = [];
+  for (let d = 1; d <= 5; d++) {
+    const pool = [...(byDiff[d] || [])];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    selected.push(...pool.slice(0, Math.min(perDifficulty, pool.length)));
   }
-  return shuffled.slice(0, Math.min(count, shuffled.length));
+  return selected;
 }
 
 function getLobbyStats() {
@@ -141,7 +147,7 @@ function startGame() {
   clearTimers();
   game.status = 'countdown';
   game.currentIndex = -1;
-  game.selectedQuestions = selectRandomQuestions(20);
+  game.selectedQuestions = selectRandomQuestions(5); // 난이도별 5문제 × 5단계 = 25문제
 
   Object.values(game.players).forEach(p => {
     p.alive = true;
@@ -236,6 +242,7 @@ function revealAnswer() {
   game.revealData = {
     correctIndex,
     correctText: q.choices[correctIndex],
+    explanation: q.explanation || '',
     results,
     eliminated,
     revived,

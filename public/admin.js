@@ -195,7 +195,7 @@ socket.on('answer:progress', ({ answered, alive }) => {
   document.getElementById('stat-answered').textContent = `${answered}/${alive}`;
 });
 
-socket.on('game:reveal', ({ correctIndex, correctText, results, eliminated, revived, aliveCount }) => {
+socket.on('game:reveal', ({ correctIndex, correctText, explanation, results, eliminated, revived, aliveCount }) => {
   clearInterval(adminTimerInterval);
   updateStatusPill('revealing');
 
@@ -220,6 +220,7 @@ socket.on('game:reveal', ({ correctIndex, correctText, results, eliminated, revi
     grid.appendChild(div);
   });
 
+  document.getElementById('reveal-explanation').textContent = explanation || '';
   document.getElementById('rs-alive').textContent = aliveCount;
   document.getElementById('rs-elim').textContent = eliminated.length;
   document.getElementById('rs-revived').textContent = revived.length;

@@ -275,7 +275,7 @@ function startTimer(total, remaining) {
 }
 
 // ── 정답 공개 ────────────────────────────────────────
-socket.on('game:reveal', ({ correctIndex, correctText, results, eliminated, revived, aliveCount }) => {
+socket.on('game:reveal', ({ correctIndex, correctText, explanation, results, eliminated, revived, aliveCount }) => {
   clearInterval(state.timerInterval);
 
   const myResult = results[state.employeeId];
@@ -283,6 +283,9 @@ socket.on('game:reveal', ({ correctIndex, correctText, results, eliminated, revi
 
   $revealCorrect.textContent = `정답: ${correctText}`;
   $revealStats.textContent = `생존자 ${aliveCount}명`;
+  const $revealExp = document.getElementById('reveal-explanation');
+  if (explanation) { $revealExp.textContent = explanation; $revealExp.classList.remove('hidden'); }
+  else { $revealExp.classList.add('hidden'); }
   $revealHeartMsg.classList.add('hidden');
 
   if (state.eliminated) {
