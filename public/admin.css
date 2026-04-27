@@ -41,6 +41,8 @@ html, body { height: 100%; font-family: 'Apple SD Gothic Neo','Noto Sans KR',-ap
 .stat-card { background: var(--bg3); border-radius: var(--radius); padding: 12px; text-align: center; border: 1px solid var(--border); }
 .stat-card.alive { border-color: rgba(16,185,129,0.4); }
 .stat-card.dead { border-color: rgba(239,68,68,0.3); }
+.stat-card.clickable { cursor: pointer; transition: filter 0.15s, transform 0.1s; }
+.stat-card.clickable:hover { filter: brightness(1.25); transform: scale(1.03); }
 .stat-card.answer { border-color: rgba(59,130,246,0.4); }
 .stat-num { font-size: 28px; font-weight: 900; }
 .stat-card.alive .stat-num { color: var(--green); }

@@ -4,6 +4,8 @@ let questionsList = [];
 let currentQuestionData = null;
 let adminTimerInterval = null;
 let adminTimerRemaining = 0;
+let cachedPlayers = [];      // 가장 최근 플레이어 상태 (reveal 포함)
+let pendingRevealData = {};  // reveal 후 공개 대기 중인 통계
 
 const socket = io({ query: { role: 'admin' } });
 
@@ -109,7 +111,7 @@ document.getElementById('btn-reset').addEventListener('click', () => {
 socket.on('game:state', ({ status, players, stats, currentIndex, totalQuestions }) => {
   updateStatusPill(status);
   updateStats(stats || { total: players?.length || 0, alive: 0, eliminated: 0 });
-  if (players) renderPlayerList(players);
+  if (players) { cachedPlayers = players; renderPlayerList(players); }
   document.getElementById('waiting-count').textContent = `${(players || []).length}명 대기 중`;
 
   if (status === 'waiting') {
@@ -120,6 +122,7 @@ socket.on('game:state', ({ status, players, stats, currentIndex, totalQuestions 
 });
 
 socket.on('lobby:update', ({ players, stats }) => {
+  cachedPlayers = players;
   updateStats(stats);
   renderPlayerList(players);
   document.getElementById('waiting-count').textContent = `${stats.total}명 대기 중`;
@@ -195,9 +198,13 @@ socket.on('answer:progress', ({ answered, alive }) => {
   document.getElementById('stat-answered').textContent = `${answered}/${alive}`;
 });
 
-socket.on('game:reveal', ({ correctIndex, correctText, explanation, results, eliminated, revived, aliveCount }) => {
+socket.on('game:reveal', ({ correctIndex, correctText, explanation, results, eliminated, revived, aliveCount, players }) => {
   clearInterval(adminTimerInterval);
   updateStatusPill('revealing');
+
+  // 플레이어 캐시 갱신 (하트/생존 상태 반영) — 사이드바는 버튼 클릭 시 공개
+  if (players) cachedPlayers = players;
+  pendingRevealData = { aliveCount, eliminated: eliminated.length, revived: revived.length };
 
   if (!currentQuestionData) return;
   const { question, choices, type } = currentQuestionData;
@@ -205,7 +212,6 @@ socket.on('game:reveal', ({ correctIndex, correctText, explanation, results, eli
   document.getElementById('reveal-question-echo').textContent = question;
   document.getElementById('reveal-answer-text').textContent = correctText;
 
-  // 선택지에 정답 표시
   const LABELS = ['A', 'B', 'C', 'D'];
   const grid = document.getElementById('reveal-choice-grid');
   grid.innerHTML = '';
@@ -221,16 +227,10 @@ socket.on('game:reveal', ({ correctIndex, correctText, explanation, results, eli
   });
 
   document.getElementById('reveal-explanation').textContent = explanation || '';
-  document.getElementById('rs-alive').textContent = aliveCount;
-  document.getElementById('rs-elim').textContent = eliminated.length;
-  document.getElementById('rs-revived').textContent = revived.length;
 
-  // 생존 현황은 버튼 클릭 시 공개
+  // 생존 현황은 버튼 클릭 시 공개 (사이드바와 분리)
   document.getElementById('reveal-summary').classList.add('hidden');
   document.getElementById('btn-reveal-stats').classList.remove('hidden');
-
-  // 사이드바 통계 갱신
-  document.getElementById('stat-alive').textContent = aliveCount;
 
   showPanel('reveal');
 });
@@ -439,6 +439,59 @@ document.getElementById('btn-export-json').addEventListener('click', () => {
 document.getElementById('btn-reveal-stats').addEventListener('click', () => {
   document.getElementById('reveal-summary').classList.remove('hidden');
   document.getElementById('btn-reveal-stats').classList.add('hidden');
+
+  // 사이드바 통계 + 참가자 목록 갱신 (하트/생존 상태 반영)
+  const alive = cachedPlayers.filter(p => p.alive).length;
+  const dead  = cachedPlayers.filter(p => !p.alive).length;
+  document.getElementById('stat-alive').textContent = alive;
+  document.getElementById('stat-dead').textContent  = dead;
+  renderPlayerList(cachedPlayers);
+
+  // reveal-summary 수치도 갱신
+  if (pendingRevealData.aliveCount !== undefined) {
+    document.getElementById('rs-alive').textContent   = pendingRevealData.aliveCount;
+    document.getElementById('rs-elim').textContent    = pendingRevealData.eliminated;
+    document.getElementById('rs-revived').textContent = pendingRevealData.revived;
+  }
+});
+
+// ── 생존자 / 탈락자 카드 클릭 → 목록 모달 ──────────────────
+document.querySelector('.stat-card.alive').addEventListener('click', () => {
+  showPlayersModal('생존자', cachedPlayers.filter(p => p.alive));
+});
+document.querySelector('.stat-card.dead').addEventListener('click', () => {
+  showPlayersModal('탈락자', cachedPlayers.filter(p => !p.alive));
+});
+
+function showPlayersModal(title, players) {
+  const filtered = [...players].sort((a, b) => b.score - a.score);
+  document.getElementById('players-modal-title').textContent = `${title} (${filtered.length}명)`;
+  const list = document.getElementById('players-modal-list');
+  list.innerHTML = '';
+  if (filtered.length === 0) {
+    list.innerHTML = '<p class="modal-empty">해당 없음</p>';
+  } else {
+    filtered.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'modal-player-item';
+      div.innerHTML = `
+        <span class="mpi-rank">${i + 1}</span>
+        <span class="mpi-nick">${escHtml(p.nickname)}</span>
+        <span class="mpi-score">${p.score > 0 ? p.score.toLocaleString() + '점' : ''}</span>
+      `;
+      list.appendChild(div);
+    });
+  }
+  document.getElementById('players-modal').classList.remove('hidden');
+}
+
+document.getElementById('players-modal-close').addEventListener('click', () => {
+  document.getElementById('players-modal').classList.add('hidden');
+});
+document.getElementById('players-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('players-modal')) {
+    document.getElementById('players-modal').classList.add('hidden');
+  }
 });
 
 // ── 결과 모달 ───────────────────────────────────────────────

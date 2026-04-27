@@ -247,6 +247,7 @@ function revealAnswer() {
     eliminated,
     revived,
     aliveCount: getAlivePlayers().length,
+    players: getPublicPlayers(),
   };
 
   io.emit('game:reveal', game.revealData);
