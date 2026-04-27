@@ -24,8 +24,17 @@ socket.on('admin:questions', ({ questions }) => {
   questionsList = questions;
   document.getElementById('admin-login').classList.add('hidden');
   document.getElementById('admin-main').classList.remove('hidden');
-  document.getElementById('join-url').textContent = window.location.origin;
   document.getElementById('pw-error').textContent = '';
+  // QR 코드 로드
+  fetch('/api/qrcode')
+    .then(r => r.json())
+    .then(({ dataUrl, url }) => {
+      document.getElementById('qr-img').src = dataUrl;
+      document.getElementById('join-url').textContent = url;
+    })
+    .catch(() => {
+      document.getElementById('join-url').textContent = window.location.origin;
+    });
   // 직원 목록도 함께 로드
   socket.emit('admin:getEmployees', { password: adminPassword });
 });
@@ -226,23 +235,44 @@ socket.on('game:finished', ({ survivors, allPlayers }) => {
   updateStatusPill('finished');
   document.getElementById('btn-next').classList.add('hidden');
 
-  const container = document.getElementById('admin-survivors');
-  container.innerHTML = '';
+  // 생존자 모달 목록 구성
   const RANK_EMOJI = ['🥇', '🥈', '🥉'];
-
-  survivors.forEach((p, i) => {
-    const div = document.createElement('div');
-    div.className = `surv-item rank-${i + 1}`;
-    div.innerHTML = `
-      <span class="surv-rank">${RANK_EMOJI[i] || (i + 1)}</span>
-      <span class="surv-nick">${escHtml(p.nickname)}</span>
-      <span class="surv-score">${p.score.toLocaleString()}점</span>
-    `;
-    container.appendChild(div);
-  });
+  const survContainer = document.getElementById('modal-survivors');
+  survContainer.innerHTML = '';
 
   if (survivors.length === 0) {
-    container.innerHTML = '<p style="color:var(--muted);text-align:center">이번 라운드 생존자가 없습니다.</p>';
+    survContainer.innerHTML = '<p class="modal-empty">이번 라운드 생존자가 없습니다.</p>';
+  } else {
+    survivors.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = `modal-player-item rank-${i + 1}`;
+      div.innerHTML = `
+        <span class="mpi-rank">${RANK_EMOJI[i] || (i + 1)}</span>
+        <span class="mpi-nick">${escHtml(p.nickname)}</span>
+        <span class="mpi-score">${p.score.toLocaleString()}점</span>
+      `;
+      survContainer.appendChild(div);
+    });
+  }
+
+  // 탈락자 목록 구성
+  const elimContainer = document.getElementById('modal-eliminated');
+  elimContainer.innerHTML = '';
+  const eliminated = (allPlayers || []).filter(p => !p.alive);
+
+  if (eliminated.length === 0) {
+    elimContainer.innerHTML = '<p class="modal-empty">탈락자가 없습니다.</p>';
+  } else {
+    eliminated.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'modal-player-item elim';
+      div.innerHTML = `
+        <span class="mpi-rank">${i + 1}</span>
+        <span class="mpi-nick">${escHtml(p.nickname)}</span>
+        <span class="mpi-score">${p.score.toLocaleString()}점</span>
+      `;
+      elimContainer.appendChild(div);
+    });
   }
 
   showPanel('finished');
@@ -398,4 +428,30 @@ document.getElementById('btn-export-json').addEventListener('click', () => {
   a.href = url;
   a.download = 'employees.json';
   a.click();
+});
+
+// ── 결과 모달 ───────────────────────────────────────────────
+document.getElementById('btn-show-results').addEventListener('click', () => {
+  document.getElementById('results-modal').classList.remove('hidden');
+});
+
+document.getElementById('results-modal-close').addEventListener('click', () => {
+  document.getElementById('results-modal').classList.add('hidden');
+});
+
+document.getElementById('results-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('results-modal')) {
+    document.getElementById('results-modal').classList.add('hidden');
+  }
+});
+
+// 결과 모달 탭 전환
+document.querySelectorAll('.results-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.results-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.rtab;
+    document.querySelectorAll('.results-tab-content').forEach(c => c.classList.add('hidden'));
+    document.getElementById(`rtab-${tab}`).classList.remove('hidden');
+  });
 });

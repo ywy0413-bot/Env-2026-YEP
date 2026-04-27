@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const QRCode = require('qrcode');
 const questions = require('./questions');
 
 let employees = [];
@@ -27,10 +28,11 @@ app.get('/api/employees', (req, res) => {
 const INITIAL_HEARTS = 1;
 
 let game = {
-  status: 'waiting',   // waiting | countdown | question | revealing | finished
-  players: {},         // employeeId -> playerData
-  socketToEmp: {},     // socketId  -> employeeId
+  status: 'waiting',      // waiting | countdown | question | revealing | finished
+  players: {},            // employeeId -> playerData
+  socketToEmp: {},        // socketId  -> employeeId
   currentIndex: -1,
+  selectedQuestions: [],  // 게임마다 랜덤 선택된 20문제
   questionStartTime: null,
   revealData: null,
   finishedData: null,
@@ -72,6 +74,15 @@ function getAlivePlayers() {
   return Object.values(game.players).filter(p => p.alive);
 }
 
+function selectRandomQuestions(count = 20) {
+  const shuffled = [...questions];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
 function getLobbyStats() {
   const all = Object.values(game.players);
   return {
@@ -91,15 +102,15 @@ function pushCurrentState(socket, player) {
   if (game.status === 'waiting') return;
 
   if (game.status === 'countdown') {
-    socket.emit('game:start', { totalQuestions: questions.length });
+    socket.emit('game:start', { totalQuestions: game.selectedQuestions.length });
     return;
   }
 
   if (game.status === 'question') {
-    const q = questions[game.currentIndex];
+    const q = game.selectedQuestions[game.currentIndex];
     socket.emit('game:question', {
       index: game.currentIndex,
-      total: questions.length,
+      total: game.selectedQuestions.length,
       type: q.type,
       question: q.question,
       choices: q.choices,
@@ -130,6 +141,7 @@ function startGame() {
   clearTimers();
   game.status = 'countdown';
   game.currentIndex = -1;
+  game.selectedQuestions = selectRandomQuestions(20);
 
   Object.values(game.players).forEach(p => {
     p.alive = true;
@@ -140,7 +152,7 @@ function startGame() {
     p.eliminated = false;
   });
 
-  io.emit('game:start', { totalQuestions: questions.length });
+  io.emit('game:start', { totalQuestions: game.selectedQuestions.length });
 
   let count = 3;
   io.emit('game:countdown', { count });
@@ -159,12 +171,12 @@ function startGame() {
 function nextQuestion() {
   game.currentIndex++;
 
-  if (game.currentIndex >= questions.length || getAlivePlayers().length === 0) {
+  if (game.currentIndex >= game.selectedQuestions.length || getAlivePlayers().length === 0) {
     endGame();
     return;
   }
 
-  const q = questions[game.currentIndex];
+  const q = game.selectedQuestions[game.currentIndex];
   game.status = 'question';
   game.questionStartTime = Date.now();
   game.revealData = null;
@@ -176,7 +188,7 @@ function nextQuestion() {
 
   const payload = {
     index: game.currentIndex,
-    total: questions.length,
+    total: game.selectedQuestions.length,
     type: q.type,
     question: q.question,
     choices: q.choices,
@@ -194,7 +206,7 @@ function revealAnswer() {
   clearTimers();
   game.status = 'revealing';
 
-  const q = questions[game.currentIndex];
+  const q = game.selectedQuestions[game.currentIndex];
   const correctIndex = q.answer;
   const results = {};
   const eliminated = [];
@@ -243,7 +255,7 @@ function revealAnswer() {
   });
 
   setTimeout(() => {
-    if (getAlivePlayers().length === 0 || game.currentIndex === questions.length - 1) {
+    if (getAlivePlayers().length === 0 || game.currentIndex === game.selectedQuestions.length - 1) {
       endGame();
     } else {
       nextQuestion();
@@ -273,6 +285,7 @@ function resetGame() {
   game.players = {};
   game.socketToEmp = {};
   game.currentIndex = -1;
+  game.selectedQuestions = [];
   game.questionStartTime = null;
   game.revealData = null;
   game.finishedData = null;
@@ -285,7 +298,7 @@ io.on('connection', (socket) => {
   socket.emit('game:state', {
     status: game.status,
     currentIndex: game.currentIndex,
-    totalQuestions: questions.length,
+    totalQuestions: game.selectedQuestions.length || 20,
     players: getPublicPlayers(),
     stats: getLobbyStats(),
   });
@@ -368,7 +381,6 @@ io.on('connection', (socket) => {
   socket.on('admin:start', ({ password }) => {
     if (password !== ADMIN_PW) { socket.emit('admin:error', { message: '비밀번호가 틀렸습니다.' }); return; }
     if (game.status !== 'waiting') { socket.emit('admin:error', { message: '이미 진행 중입니다.' }); return; }
-    if (Object.keys(game.players).length === 0) { socket.emit('admin:error', { message: '참가자가 없습니다.' }); return; }
     startGame();
   });
 
@@ -377,7 +389,7 @@ io.on('connection', (socket) => {
     if (game.status === 'question') revealAnswer();
     else if (game.status === 'revealing') {
       clearTimers();
-      if (getAlivePlayers().length === 0 || game.currentIndex === questions.length - 1) endGame();
+      if (getAlivePlayers().length === 0 || game.currentIndex === game.selectedQuestions.length - 1) endGame();
       else nextQuestion();
     }
   });
@@ -452,6 +464,17 @@ app.get('/api/employees/export', (req, res) => {
   res.setHeader('Content-Disposition', 'attachment; filename="employees.json"');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.json(employees);
+});
+
+// ─── QR 코드 생성 ────────────────────────────────────────────
+app.get('/api/qrcode', async (req, res) => {
+  const baseUrl = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
+  try {
+    const dataUrl = await QRCode.toDataURL(baseUrl, { width: 300, margin: 2 });
+    res.json({ dataUrl, url: baseUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ─── 헬스체크 ─────────────────────────────────────────────────

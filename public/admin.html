@@ -86,9 +86,9 @@
       <div class="waiting-display">
         <div class="wd-icon">📱</div>
         <h2>참가자 대기 중</h2>
-        <p>참가자들이 <strong>개인 휴대폰</strong>으로 아래 주소에 접속하면 됩니다</p>
+        <p>참가자들이 <strong>개인 휴대폰</strong>으로 QR 코드를 스캔하거나 아래 주소에 접속하면 됩니다</p>
+        <img id="qr-img" class="qr-img" src="" alt="QR Code" />
         <div id="join-url" class="join-url">서버 주소 로딩 중...</div>
-        <div id="qr-placeholder" class="qr-hint">※ URL을 화면에 크게 표시하거나 QR 코드를 준비하세요</div>
         <div id="waiting-count" class="waiting-count">0명 대기 중</div>
       </div>
     </div>
@@ -128,8 +128,12 @@
 
     <!-- 최종 결과 패널 -->
     <div id="main-finished" class="main-panel">
-      <h2 class="finish-h2">🏆 최종 결과</h2>
-      <div id="admin-survivors" class="admin-survivors"></div>
+      <div class="finish-center">
+        <div class="finish-trophy">🏆</div>
+        <h2 class="finish-h2">게임 종료!</h2>
+        <p class="finish-sub">최종 결과를 확인하려면 아래 버튼을 클릭하세요</p>
+        <button id="btn-show-results" class="ctrl-btn start finish-results-btn">결과 보기</button>
+      </div>
     </div>
 
     <!-- 직원 관리 패널 -->
@@ -168,6 +172,26 @@
     </div>
   </main>
 
+</div>
+
+<!-- 결과 모달 -->
+<div id="results-modal" class="modal-overlay hidden">
+  <div class="modal-box results-modal-box">
+    <h3 class="modal-title">🏆 최종 결과</h3>
+    <div class="results-tabs">
+      <button class="results-tab-btn active" data-rtab="survivors">생존자</button>
+      <button class="results-tab-btn" data-rtab="eliminated">탈락자</button>
+    </div>
+    <div id="rtab-survivors" class="results-tab-content">
+      <div id="modal-survivors" class="modal-player-list"></div>
+    </div>
+    <div id="rtab-eliminated" class="results-tab-content hidden">
+      <div id="modal-eliminated" class="modal-player-list"></div>
+    </div>
+    <div class="modal-actions">
+      <button id="results-modal-close" class="ctrl-btn reset">닫기</button>
+    </div>
+  </div>
 </div>
 
 <!-- 수정 모달 -->
