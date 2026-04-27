@@ -26,45 +26,60 @@
   <aside class="sidebar">
     <div class="sidebar-logo">🎯 퀴즈 라이브<span class="admin-badge">진행자</span></div>
 
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-num" id="stat-total">0</div>
-        <div class="stat-label">전체 참가</div>
+    <!-- 탭 버튼 -->
+    <div class="tab-btns">
+      <button class="tab-btn active" data-tab="game">🎮 게임 진행</button>
+      <button class="tab-btn" data-tab="employees">👥 직원 관리</button>
+    </div>
+
+    <!-- 게임 탭 컨텐츠 -->
+    <div id="tab-game" class="tab-content">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">전체 참가</div>
+        </div>
+        <div class="stat-card alive">
+          <div class="stat-num" id="stat-alive">0</div>
+          <div class="stat-label">생존자</div>
+        </div>
+        <div class="stat-card dead">
+          <div class="stat-num" id="stat-dead">0</div>
+          <div class="stat-label">탈락자</div>
+        </div>
+        <div class="stat-card answer">
+          <div class="stat-num" id="stat-answered">-</div>
+          <div class="stat-label">답변 완료</div>
+        </div>
       </div>
-      <div class="stat-card alive">
-        <div class="stat-num" id="stat-alive">0</div>
-        <div class="stat-label">생존자</div>
+
+      <div class="game-status-wrap">
+        <div class="status-label">게임 상태</div>
+        <div id="game-status-pill" class="status-pill waiting">대기 중</div>
       </div>
-      <div class="stat-card dead">
-        <div class="stat-num" id="stat-dead">0</div>
-        <div class="stat-label">탈락자</div>
+
+      <div class="controls">
+        <button id="btn-start" class="ctrl-btn start">▶ 게임 시작</button>
+        <button id="btn-next" class="ctrl-btn next hidden">⏭ 다음 단계</button>
+        <button id="btn-reset" class="ctrl-btn reset">🔄 리셋</button>
       </div>
-      <div class="stat-card answer">
-        <div class="stat-num" id="stat-answered">-</div>
-        <div class="stat-label">답변 완료</div>
+
+      <div class="player-list-wrap">
+        <div class="pl-header">참가자 목록</div>
+        <div id="player-list" class="player-list"></div>
       </div>
     </div>
 
-    <div class="game-status-wrap">
-      <div class="status-label">게임 상태</div>
-      <div id="game-status-pill" class="status-pill waiting">대기 중</div>
-    </div>
-
-    <!-- 컨트롤 버튼 -->
-    <div class="controls">
-      <button id="btn-start" class="ctrl-btn start">▶ 게임 시작</button>
-      <button id="btn-next" class="ctrl-btn next hidden">⏭ 다음 단계</button>
-      <button id="btn-reset" class="ctrl-btn reset">🔄 리셋</button>
-    </div>
-
-    <!-- 참가자 목록 -->
-    <div class="player-list-wrap">
-      <div class="pl-header">참가자 목록</div>
-      <div id="player-list" class="player-list"></div>
+    <!-- 직원 관리 탭 컨텐츠 -->
+    <div id="tab-employees" class="tab-content hidden">
+      <div class="emp-sidebar-info">
+        <span id="emp-count-badge" class="emp-count-badge">0명</span>
+        <button id="btn-export-json" class="ctrl-btn export">⬇ JSON 내보내기</button>
+      </div>
     </div>
   </aside>
 
-  <!-- 메인 영역: 현재 문제 / 결과 -->
+  <!-- 메인 영역 -->
   <main class="main-area">
     <!-- 대기 화면 -->
     <div id="main-waiting" class="main-panel active">
@@ -81,7 +96,7 @@
     <!-- 문제 표시 패널 -->
     <div id="main-question" class="main-panel">
       <div class="q-progress-wrap">
-        <div id="admin-q-num" class="admin-q-num">문제 1 / 12</div>
+        <div id="admin-q-num" class="admin-q-num">문제 1 / 22</div>
         <div class="progress-bar-wrap">
           <div id="admin-progress-bar" class="progress-bar"></div>
         </div>
@@ -90,9 +105,7 @@
       <div id="admin-choices" class="admin-choices"></div>
       <div class="answer-progress-wrap">
         <div class="ap-label">답변 현황</div>
-        <div class="ap-bar-bg">
-          <div id="ap-bar" class="ap-bar"></div>
-        </div>
+        <div class="ap-bar-bg"><div id="ap-bar" class="ap-bar"></div></div>
         <div id="ap-count" class="ap-count">0 / 0명 답변</div>
       </div>
       <div id="admin-timer-display" class="admin-timer">⏱ <span id="admin-timer-num">15</span>초</div>
@@ -118,8 +131,68 @@
       <h2 class="finish-h2">🏆 최종 결과</h2>
       <div id="admin-survivors" class="admin-survivors"></div>
     </div>
+
+    <!-- 직원 관리 패널 -->
+    <div id="main-employees" class="main-panel emp-panel">
+      <div class="emp-panel-header">
+        <h2 class="emp-title">👥 직원 관리</h2>
+        <div class="emp-search-wrap">
+          <input id="emp-search" type="text" placeholder="이름 / 부서 검색..." class="emp-search" />
+        </div>
+      </div>
+
+      <!-- 추가 폼 -->
+      <div class="emp-add-form">
+        <input id="new-group" type="text" placeholder="부서" class="emp-input" />
+        <input id="new-name"  type="text" placeholder="이름 *" class="emp-input" />
+        <input id="new-pw"   type="text" placeholder="비밀번호 *" maxlength="4" inputmode="numeric" class="emp-input pw-cell" />
+        <button id="btn-add-emp" class="emp-action-btn add">+ 추가</button>
+      </div>
+      <p id="emp-form-error" class="emp-error"></p>
+
+      <!-- 직원 테이블 -->
+      <div class="emp-table-wrap">
+        <table class="emp-table">
+          <thead>
+            <tr>
+              <th style="width:48px">번호</th>
+              <th style="width:120px">부서</th>
+              <th style="width:100px">이름</th>
+              <th style="width:90px">비밀번호</th>
+              <th style="width:120px">작업</th>
+            </tr>
+          </thead>
+          <tbody id="emp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </main>
 
+</div>
+
+<!-- 수정 모달 -->
+<div id="edit-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 class="modal-title">직원 정보 수정</h3>
+    <input type="hidden" id="edit-id" />
+    <div class="modal-field">
+      <label>부서</label>
+      <input id="edit-group" type="text" class="modal-input" />
+    </div>
+    <div class="modal-field">
+      <label>이름</label>
+      <input id="edit-name" type="text" class="modal-input" />
+    </div>
+    <div class="modal-field">
+      <label>비밀번호 <span style="color:var(--muted);font-size:12px">(변경 시 4자리 입력)</span></label>
+      <input id="edit-pw" type="text" maxlength="4" inputmode="numeric" class="modal-input pw-cell" placeholder="변경하지 않으면 비워두세요" />
+    </div>
+    <p id="edit-error" class="emp-error"></p>
+    <div class="modal-actions">
+      <button id="edit-cancel" class="ctrl-btn reset">취소</button>
+      <button id="edit-save" class="ctrl-btn start">저장</button>
+    </div>
+  </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>

@@ -26,10 +26,23 @@ socket.on('admin:questions', ({ questions }) => {
   document.getElementById('admin-main').classList.remove('hidden');
   document.getElementById('join-url').textContent = window.location.origin;
   document.getElementById('pw-error').textContent = '';
+  // 직원 목록도 함께 로드
+  socket.emit('admin:getEmployees', { password: adminPassword });
 });
 
 socket.on('admin:error', ({ message }) => {
-  document.getElementById('pw-error').textContent = message;
+  const pwErr = document.getElementById('pw-error');
+  const empErr = document.getElementById('emp-form-error');
+  const editErr = document.getElementById('edit-error');
+  // 어느 에러 박스를 쓸지 현재 상태로 판단
+  if (!document.getElementById('admin-login').classList.contains('hidden')) {
+    pwErr.textContent = message;
+  } else if (!document.getElementById('edit-modal').classList.contains('hidden')) {
+    editErr.textContent = message;
+  } else {
+    empErr.textContent = message;
+    setTimeout(() => { empErr.textContent = ''; }, 3000);
+  }
 });
 
 // ── 패널 전환 ────────────────────────────────────
@@ -253,3 +266,136 @@ socket.on('game:reset', () => {
 function escHtml(str) {
   return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+
+// ══════════════════════════════════════════════════
+//  탭 전환
+// ══════════════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+    if (tab === 'employees') {
+      showPanel('employees');
+    } else {
+      // 게임 탭으로 돌아올 때 현재 게임 패널 복원
+      const statusMap = { waiting:'waiting', countdown:'waiting', question:'question', revealing:'reveal', finished:'finished' };
+      const pill = document.getElementById('game-status-pill').className.replace('status-pill ','');
+      showPanel(statusMap[pill] || 'waiting');
+    }
+  });
+});
+
+// ══════════════════════════════════════════════════
+//  직원 관리
+// ══════════════════════════════════════════════════
+let empList = [];
+let empSearchTerm = '';
+
+// 직원 목록 수신
+socket.on('admin:employeeList', ({ employees }) => {
+  empList = employees;
+  renderEmpTable();
+  document.getElementById('emp-count-badge').textContent = `${employees.length}명`;
+});
+
+// 검색
+document.getElementById('emp-search').addEventListener('input', e => {
+  empSearchTerm = e.target.value.trim().toLowerCase();
+  renderEmpTable();
+});
+
+// 테이블 렌더링
+function renderEmpTable() {
+  const tbody = document.getElementById('emp-tbody');
+  tbody.innerHTML = '';
+
+  const filtered = empSearchTerm
+    ? empList.filter(e => e.name.toLowerCase().includes(empSearchTerm) || e.group.toLowerCase().includes(empSearchTerm))
+    : empList;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">검색 결과 없음</td></tr>`;
+    return;
+  }
+
+  filtered.forEach(emp => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="emp-id">${emp.id}</td>
+      <td>${escHtml(emp.group)}</td>
+      <td><strong>${escHtml(emp.name)}</strong></td>
+      <td class="pw-cell">${escHtml(emp.pw)}</td>
+      <td class="emp-actions">
+        <button class="emp-action-btn edit" data-id="${emp.id}">수정</button>
+        <button class="emp-action-btn del" data-id="${emp.id}">삭제</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // 이벤트 위임
+  tbody.querySelectorAll('.emp-action-btn.edit').forEach(btn => {
+    btn.addEventListener('click', () => openEditModal(Number(btn.dataset.id)));
+  });
+  tbody.querySelectorAll('.emp-action-btn.del').forEach(btn => {
+    btn.addEventListener('click', () => deleteEmployee(Number(btn.dataset.id)));
+  });
+}
+
+// 직원 추가
+document.getElementById('btn-add-emp').addEventListener('click', () => {
+  const group = document.getElementById('new-group').value.trim();
+  const name  = document.getElementById('new-name').value.trim();
+  const pw    = document.getElementById('new-pw').value.trim();
+  document.getElementById('emp-form-error').textContent = '';
+  socket.emit('admin:addEmployee', { password: adminPassword, employee: { name, group, pw } });
+  // 성공 시 서버에서 employeeList 이벤트로 갱신됨
+  document.getElementById('new-group').value = '';
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-pw').value = '';
+});
+
+// 직원 삭제
+function deleteEmployee(id) {
+  const emp = empList.find(e => e.id === id);
+  if (!emp) return;
+  if (!confirm(`"${emp.name}" 직원을 삭제하시겠습니까?`)) return;
+  socket.emit('admin:deleteEmployee', { password: adminPassword, id });
+}
+
+// 수정 모달
+function openEditModal(id) {
+  const emp = empList.find(e => e.id === id);
+  if (!emp) return;
+  document.getElementById('edit-id').value = emp.id;
+  document.getElementById('edit-group').value = emp.group;
+  document.getElementById('edit-name').value = emp.name;
+  document.getElementById('edit-pw').value = '';
+  document.getElementById('edit-error').textContent = '';
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+document.getElementById('edit-cancel').addEventListener('click', () => {
+  document.getElementById('edit-modal').classList.add('hidden');
+});
+
+document.getElementById('edit-save').addEventListener('click', () => {
+  const id    = Number(document.getElementById('edit-id').value);
+  const group = document.getElementById('edit-group').value.trim();
+  const name  = document.getElementById('edit-name').value.trim();
+  const pw    = document.getElementById('edit-pw').value.trim();
+  socket.emit('admin:updateEmployee', { password: adminPassword, employee: { id, name, group, pw } });
+  document.getElementById('edit-modal').classList.add('hidden');
+});
+
+// JSON 내보내기 (다운로드)
+document.getElementById('btn-export-json').addEventListener('click', () => {
+  const url = `/api/employees/export?key=${encodeURIComponent(adminPassword)}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'employees.json';
+  a.click();
+});

@@ -392,6 +392,43 @@ io.on('connection', (socket) => {
     socket.emit('admin:questions', { questions });
   });
 
+  // ── 직원 관리 ────────────────────────────────────────────────
+  socket.on('admin:getEmployees', ({ password }) => {
+    if (password !== ADMIN_PW) return;
+    socket.emit('admin:employeeList', { employees });
+  });
+
+  socket.on('admin:addEmployee', ({ password, employee }) => {
+    if (password !== ADMIN_PW) return;
+    const name = (employee.name || '').trim();
+    const group = (employee.group || '').trim();
+    const pw = String(employee.pw || '').trim();
+    if (!name) { socket.emit('admin:error', { message: '이름을 입력해주세요.' }); return; }
+    if (pw.length !== 4 || !/^\d{4}$/.test(pw)) { socket.emit('admin:error', { message: '비밀번호는 숫자 4자리입니다.' }); return; }
+    const id = employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1;
+    employees.push({ id, name, group, pw });
+    socket.emit('admin:employeeList', { employees });
+  });
+
+  socket.on('admin:updateEmployee', ({ password, employee }) => {
+    if (password !== ADMIN_PW) return;
+    const emp = employees.find(e => e.id === employee.id);
+    if (!emp) return;
+    const pw = String(employee.pw || '').trim();
+    if (pw && (pw.length !== 4 || !/^\d{4}$/.test(pw))) { socket.emit('admin:error', { message: '비밀번호는 숫자 4자리입니다.' }); return; }
+    emp.name  = (employee.name  || '').trim() || emp.name;
+    emp.group = (employee.group || '').trim();
+    if (pw) emp.pw = pw;
+    socket.emit('admin:employeeList', { employees });
+  });
+
+  socket.on('admin:deleteEmployee', ({ password, id }) => {
+    if (password !== ADMIN_PW) return;
+    const idx = employees.findIndex(e => e.id === id);
+    if (idx !== -1) employees.splice(idx, 1);
+    socket.emit('admin:employeeList', { employees });
+  });
+
   // ── 연결 해제 ───────────────────────────────────────────────
   socket.on('disconnect', () => {
     const player = getPlayerBySocket(socket.id);
@@ -406,6 +443,15 @@ io.on('connection', (socket) => {
     }
     delete game.socketToEmp[socket.id];
   });
+});
+
+// ─── 직원 목록 내보내기 (어드민 전용) ────────────────────────
+app.get('/api/employees/export', (req, res) => {
+  const ADMIN_PW = process.env.ADMIN_PW || 'admin1234';
+  if (req.query.key !== ADMIN_PW) { res.status(401).json({ error: 'Unauthorized' }); return; }
+  res.setHeader('Content-Disposition', 'attachment; filename="employees.json"');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.json(employees);
 });
 
 // ─── 헬스체크 ─────────────────────────────────────────────────
