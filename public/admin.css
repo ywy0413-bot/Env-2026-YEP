@@ -1,0 +1,142 @@
+/* ── 기본 ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f0e17;
+  --bg2: #1a1928;
+  --bg3: #242338;
+  --accent: #7c3aed;
+  --accent2: #a855f7;
+  --green: #10b981;
+  --red: #ef4444;
+  --gold: #f59e0b;
+  --blue: #3b82f6;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #2d2b50;
+  --radius: 12px;
+}
+html, body { height: 100%; font-family: 'Apple SD Gothic Neo','Noto Sans KR',-apple-system,sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+
+/* ── 로그인 오버레이 ─────────────────────────── */
+.overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg); z-index: 100; }
+.login-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 40px; display: flex; flex-direction: column; gap: 16px; width: 360px; text-align: center; }
+.login-logo { font-size: 28px; font-weight: 800; }
+.login-box h2 { font-size: 18px; color: var(--muted); }
+.login-box input { padding: 14px; font-size: 16px; border-radius: var(--radius); border: 2px solid var(--border); background: var(--bg3); color: var(--text); text-align: center; outline: none; }
+.login-box input:focus { border-color: var(--accent2); }
+.btn-primary { padding: 14px; font-size: 16px; font-weight: 700; border: none; border-radius: var(--radius); background: linear-gradient(135deg,var(--accent),var(--accent2)); color: #fff; cursor: pointer; }
+.error { color: var(--red); font-size: 14px; min-height: 18px; }
+.hidden { display: none !important; }
+
+/* ── 메인 레이아웃 ────────────────────────────── */
+.admin-layout { display: grid; grid-template-columns: 300px 1fr; height: 100vh; }
+
+/* ── 사이드바 ────────────────────────────────── */
+.sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px; padding: 16px; overflow-y: auto; }
+.sidebar-logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.admin-badge { background: var(--accent); color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 600; }
+
+/* 통계 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-card { background: var(--bg3); border-radius: var(--radius); padding: 12px; text-align: center; border: 1px solid var(--border); }
+.stat-card.alive { border-color: rgba(16,185,129,0.4); }
+.stat-card.dead { border-color: rgba(239,68,68,0.3); }
+.stat-card.answer { border-color: rgba(59,130,246,0.4); }
+.stat-num { font-size: 28px; font-weight: 900; }
+.stat-card.alive .stat-num { color: var(--green); }
+.stat-card.dead .stat-num { color: var(--red); }
+.stat-card.answer .stat-num { color: var(--blue); }
+.stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* 상태 */
+.game-status-wrap { display: flex; align-items: center; justify-content: space-between; }
+.status-label { font-size: 13px; color: var(--muted); }
+.status-pill { padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+.status-pill.waiting { background: rgba(148,163,184,0.15); color: var(--muted); }
+.status-pill.countdown { background: rgba(245,158,11,0.2); color: var(--gold); }
+.status-pill.question { background: rgba(59,130,246,0.2); color: var(--blue); }
+.status-pill.revealing { background: rgba(16,185,129,0.2); color: var(--green); }
+.status-pill.finished { background: rgba(124,58,237,0.2); color: var(--accent2); }
+
+/* 컨트롤 */
+.controls { display: flex; flex-direction: column; gap: 8px; }
+.ctrl-btn { padding: 12px; font-size: 15px; font-weight: 700; border: none; border-radius: var(--radius); cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
+.ctrl-btn:active { transform: scale(0.98); }
+.ctrl-btn.start { background: linear-gradient(135deg,#059669,#10b981); color: #fff; }
+.ctrl-btn.next { background: linear-gradient(135deg,#2563eb,#3b82f6); color: #fff; }
+.ctrl-btn.reset { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+
+/* 참가자 목록 */
+.player-list-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.pl-header { font-size: 13px; color: var(--muted); font-weight: 600; }
+.player-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+.player-item { background: var(--bg3); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); font-size: 14px; }
+.player-item.dead { opacity: 0.4; border-color: transparent; }
+.pi-nick { font-weight: 600; }
+.pi-hearts { font-size: 13px; letter-spacing: 1px; }
+.pi-score { font-size: 12px; color: var(--gold); }
+
+/* ── 메인 영역 ────────────────────────────────── */
+.main-area { position: relative; overflow: hidden; }
+.main-panel { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 24px; opacity: 0; pointer-events: none; transition: opacity 0.3s; overflow-y: auto; }
+.main-panel.active { opacity: 1; pointer-events: all; }
+
+/* 대기 */
+.waiting-display { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.wd-icon { font-size: 80px; }
+.waiting-display h2 { font-size: 32px; font-weight: 800; }
+.waiting-display p { color: var(--muted); font-size: 18px; }
+.join-url { background: var(--bg3); border: 2px dashed var(--accent); border-radius: var(--radius); padding: 16px 32px; font-size: 22px; font-weight: 800; color: var(--accent2); letter-spacing: 2px; font-family: monospace; }
+.qr-hint { color: var(--muted); font-size: 14px; }
+.waiting-count { font-size: 36px; font-weight: 900; color: var(--gold); }
+
+/* 문제 패널 */
+.q-progress-wrap { width: 100%; max-width: 800px; }
+.admin-q-num { font-size: 20px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+.progress-bar-wrap { background: var(--bg3); border-radius: 8px; height: 8px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg,var(--accent),var(--accent2)); transition: width 0.5s; border-radius: 8px; }
+.admin-question-text { font-size: 32px; font-weight: 800; text-align: center; line-height: 1.4; max-width: 800px; word-break: keep-all; }
+.admin-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 800px; }
+.admin-choice { padding: 20px; border-radius: var(--radius); font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+.ac-label { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; flex-shrink: 0; }
+.ac-0 { background: #1e3a5f; } .ac-0 .ac-label { background: #3b82f6; color: #fff; }
+.ac-1 { background: #1a3d2b; } .ac-1 .ac-label { background: #22c55e; color: #fff; }
+.ac-2 { background: #4a1d1d; } .ac-2 .ac-label { background: #ef4444; color: #fff; }
+.ac-3 { background: #3d2c0a; } .ac-3 .ac-label { background: #f59e0b; color: #fff; }
+.ac-0.correct,.ac-1.correct,.ac-2.correct,.ac-3.correct { outline: 4px solid var(--green); }
+/* OX */
+.ac-ox-0 { background: #1e3a5f; justify-content: center; font-size: 36px; }
+.ac-ox-1 { background: #4a1d1d; justify-content: center; font-size: 36px; }
+
+.answer-progress-wrap { width: 100%; max-width: 800px; }
+.ap-label { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+.ap-bar-bg { background: var(--bg3); border-radius: 8px; height: 12px; overflow: hidden; margin-bottom: 6px; }
+.ap-bar { height: 100%; background: linear-gradient(90deg,#3b82f6,#6366f1); transition: width 0.3s; border-radius: 8px; width: 0%; }
+.ap-count { font-size: 14px; color: var(--muted); }
+.admin-timer { font-size: 24px; font-weight: 800; color: var(--gold); }
+
+/* 정답 공개 패널 */
+.reveal-q-echo { font-size: 22px; color: var(--muted); text-align: center; max-width: 700px; }
+.reveal-answer-display { text-align: center; }
+.rev-label { font-size: 16px; color: var(--muted); margin-bottom: 8px; }
+.rev-answer { font-size: 42px; font-weight: 900; color: var(--green); }
+.reveal-choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 800px; }
+.rca { padding: 16px 20px; border-radius: var(--radius); font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 10px; border: 2px solid transparent; }
+.rca.is-correct { border-color: var(--green); background: rgba(16,185,129,0.15); }
+.rca.is-wrong { opacity: 0.4; }
+.rca-label { background: var(--bg3); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; }
+.reveal-summary { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+.rs-item { background: var(--bg3); border-radius: var(--radius); padding: 12px 24px; font-size: 16px; }
+.rs-item strong { font-size: 28px; display: block; margin-bottom: 4px; }
+.rs-item.alive strong { color: var(--green); }
+.rs-item.elim strong { color: var(--red); }
+.rs-item.revived strong { color: var(--gold); }
+
+/* 최종 결과 */
+.finish-h2 { font-size: 36px; font-weight: 900; }
+.admin-survivors { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 600px; }
+.surv-item { background: var(--bg3); border-radius: var(--radius); padding: 16px 20px; display: flex; align-items: center; gap: 16px; border: 1px solid var(--border); }
+.surv-item.rank-1 { border-color: var(--gold); background: rgba(245,158,11,0.1); }
+.surv-rank { font-size: 28px; width: 36px; }
+.surv-nick { flex: 1; font-size: 20px; font-weight: 700; }
+.surv-score { font-size: 18px; color: var(--gold); font-weight: 700; }

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>퀴즈 라이브 - 진행자</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<!-- ── 로그인 ── -->
+<div id="admin-login" class="overlay">
+  <div class="login-box">
+    <div class="login-logo">🎮 퀴즈 라이브</div>
+    <h2>진행자 화면</h2>
+    <input id="pw-input" type="password" placeholder="비밀번호 입력" />
+    <button id="pw-btn" class="btn-primary">입장</button>
+    <p id="pw-error" class="error"></p>
+  </div>
+</div>
+
+<!-- ── 메인 어드민 UI ── -->
+<div id="admin-main" class="admin-layout hidden">
+
+  <!-- 사이드바 -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">🎯 퀴즈 라이브<span class="admin-badge">진행자</span></div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">전체 참가</div>
+      </div>
+      <div class="stat-card alive">
+        <div class="stat-num" id="stat-alive">0</div>
+        <div class="stat-label">생존자</div>
+      </div>
+      <div class="stat-card dead">
+        <div class="stat-num" id="stat-dead">0</div>
+        <div class="stat-label">탈락자</div>
+      </div>
+      <div class="stat-card answer">
+        <div class="stat-num" id="stat-answered">-</div>
+        <div class="stat-label">답변 완료</div>
+      </div>
+    </div>
+
+    <div class="game-status-wrap">
+      <div class="status-label">게임 상태</div>
+      <div id="game-status-pill" class="status-pill waiting">대기 중</div>
+    </div>
+
+    <!-- 컨트롤 버튼 -->
+    <div class="controls">
+      <button id="btn-start" class="ctrl-btn start">▶ 게임 시작</button>
+      <button id="btn-next" class="ctrl-btn next hidden">⏭ 다음 단계</button>
+      <button id="btn-reset" class="ctrl-btn reset">🔄 리셋</button>
+    </div>
+
+    <!-- 참가자 목록 -->
+    <div class="player-list-wrap">
+      <div class="pl-header">참가자 목록</div>
+      <div id="player-list" class="player-list"></div>
+    </div>
+  </aside>
+
+  <!-- 메인 영역: 현재 문제 / 결과 -->
+  <main class="main-area">
+    <!-- 대기 화면 -->
+    <div id="main-waiting" class="main-panel active">
+      <div class="waiting-display">
+        <div class="wd-icon">📱</div>
+        <h2>참가자 대기 중</h2>
+        <p>참가자들이 <strong>개인 휴대폰</strong>으로 아래 주소에 접속하면 됩니다</p>
+        <div id="join-url" class="join-url">서버 주소 로딩 중...</div>
+        <div id="qr-placeholder" class="qr-hint">※ URL을 화면에 크게 표시하거나 QR 코드를 준비하세요</div>
+        <div id="waiting-count" class="waiting-count">0명 대기 중</div>
+      </div>
+    </div>
+
+    <!-- 문제 표시 패널 -->
+    <div id="main-question" class="main-panel">
+      <div class="q-progress-wrap">
+        <div id="admin-q-num" class="admin-q-num">문제 1 / 12</div>
+        <div class="progress-bar-wrap">
+          <div id="admin-progress-bar" class="progress-bar"></div>
+        </div>
+      </div>
+      <div id="admin-question-text" class="admin-question-text"></div>
+      <div id="admin-choices" class="admin-choices"></div>
+      <div class="answer-progress-wrap">
+        <div class="ap-label">답변 현황</div>
+        <div class="ap-bar-bg">
+          <div id="ap-bar" class="ap-bar"></div>
+        </div>
+        <div id="ap-count" class="ap-count">0 / 0명 답변</div>
+      </div>
+      <div id="admin-timer-display" class="admin-timer">⏱ <span id="admin-timer-num">15</span>초</div>
+    </div>
+
+    <!-- 정답 공개 패널 -->
+    <div id="main-reveal" class="main-panel">
+      <div id="reveal-question-echo" class="reveal-q-echo"></div>
+      <div class="reveal-answer-display">
+        <div class="rev-label">정답</div>
+        <div id="reveal-answer-text" class="rev-answer"></div>
+      </div>
+      <div id="reveal-choice-grid" class="reveal-choice-grid"></div>
+      <div class="reveal-summary">
+        <div class="rs-item alive">생존자 <strong id="rs-alive">0</strong>명</div>
+        <div class="rs-item elim">이번 탈락 <strong id="rs-elim">0</strong>명</div>
+        <div class="rs-item revived">하트 사용 <strong id="rs-revived">0</strong>명</div>
+      </div>
+    </div>
+
+    <!-- 최종 결과 패널 -->
+    <div id="main-finished" class="main-panel">
+      <h2 class="finish-h2">🏆 최종 결과</h2>
+      <div id="admin-survivors" class="admin-survivors"></div>
+    </div>
+  </main>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
