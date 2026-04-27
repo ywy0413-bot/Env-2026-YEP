@@ -11,140 +11,140 @@ module.exports = [
     id: 1, type: 'multiple', difficulty: 1,
     question: '대한민국의 수도는?',
     choices: ['부산', '서울', '인천', '대전'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '서울은 1394년 조선 건국 이래 수도로, 현재 인구 약 950만 명의 대한민국 최대 도시입니다.'
   },
   {
     id: 2, type: 'multiple', difficulty: 1,
     question: '한국의 국화(나라꽃)는?',
     choices: ['장미', '벚꽃', '진달래', '무궁화'],
-    answer: 3, timeLimit: 20,
+    answer: 3, timeLimit: 15,
     explanation: '무궁화는 "영원히 피고 또 피어서 지지 않는 꽃"이라는 뜻으로 애국가 가사에도 등장합니다.'
   },
   {
     id: 3, type: 'multiple', difficulty: 1,
     question: '남한에서 가장 높은 산은?',
     choices: ['지리산', '설악산', '한라산', '북한산'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '한라산(1,947m)은 남한 최고봉입니다. 2위는 지리산(1,915m), 3위는 설악산 대청봉(1,708m)입니다.'
   },
   {
     id: 4, type: 'multiple', difficulty: 1,
     question: '훈민정음(한글)을 만든 왕은?',
     choices: ['태종', '세종대왕', '성종', '영조'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '세종대왕이 1443년 훈민정음을 창제하고 1446년에 반포했습니다. 한글은 세계에서 만든 사람과 날짜가 알려진 유일한 문자입니다.'
   },
   {
     id: 5, type: 'multiple', difficulty: 1,
     question: '한국에서 가장 큰 섬은?',
     choices: ['울릉도', '거제도', '강화도', '제주도'],
-    answer: 3, timeLimit: 20,
+    answer: 3, timeLimit: 15,
     explanation: '제주도(면적 1,849km²)는 한국 최대의 섬이자 특별자치도입니다. 세계자연유산·세계지질공원에도 등재되어 있습니다.'
   },
   {
     id: 6, type: 'multiple', difficulty: 1,
     question: '한국의 전통 명절 추석은 음력 몇 월 며칠인가?',
     choices: ['음력 1월 1일', '음력 5월 5일', '음력 7월 7일', '음력 8월 15일'],
-    answer: 3, timeLimit: 20,
+    answer: 3, timeLimit: 15,
     explanation: '추석(한가위)은 음력 8월 15일로, 한 해의 추수에 감사하는 한국 최대 명절 중 하나입니다.'
   },
   {
     id: 7, type: 'multiple', difficulty: 1,
     question: '대한민국의 초대 대통령은?',
     choices: ['박정희', '김대중', '이승만', '윤보선'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '이승만은 1948년 대한민국 정부 수립 후 초대 대통령이 되었습니다. 4·19 혁명으로 하야 후 하와이로 망명했습니다.'
   },
   {
     id: 8, type: 'multiple', difficulty: 1,
     question: '한국 전쟁이 발발한 해는?',
     choices: ['1945년', '1948년', '1950년', '1953년'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '1950년 6월 25일 북한의 기습 남침으로 한국전쟁이 발발했습니다. 1953년 7월 27일 휴전협정이 체결되었으며, 공식적으로 아직 종전 선언은 없습니다.'
   },
   {
     id: 9, type: 'multiple', difficulty: 1,
     question: '한국에서 가장 긴 강은?',
     choices: ['한강', '금강', '영산강', '낙동강'],
-    answer: 3, timeLimit: 20,
+    answer: 3, timeLimit: 15,
     explanation: '낙동강은 약 525km로 남한에서 가장 긴 강입니다. 2위는 한강(약 514km), 3위는 금강(약 401km)입니다.'
   },
   {
     id: 10, type: 'ox', difficulty: 1,
     question: '태극기의 4괘 중 "건(乾)"은 하늘을 상징한다.',
     choices: ['O', 'X'],
-    answer: 0, timeLimit: 20,
+    answer: 0, timeLimit: 15,
     explanation: '태극기 네 모서리의 4괘는 건(乾·하늘), 곤(坤·땅), 감(坎·물), 리(離·불)를 상징합니다.'
   },
   {
     id: 11, type: 'multiple', difficulty: 1,
     question: '삼일절은 몇 월 며칠인가?',
     choices: ['1월 1일', '3월 1일', '8월 15일', '10월 3일'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '1919년 3월 1일 일제에 맞서 독립만세운동이 일어났습니다. 전국 약 200만 명이 참여한 역사적 사건으로, 현재 공휴일로 기념합니다.'
   },
   {
     id: 12, type: 'ox', difficulty: 1,
     question: '한국은 세계 최초로 5G 이동통신 상용화에 성공한 나라다.',
     choices: ['O', 'X'],
-    answer: 0, timeLimit: 20,
+    answer: 0, timeLimit: 15,
     explanation: '2019년 4월 3일 한국이 세계 최초로 5G 서비스를 상용화했습니다. 미국이 불과 몇 시간 차이로 뒤를 이었습니다.'
   },
   {
     id: 13, type: 'multiple', difficulty: 1,
     question: '다음 중 한국의 전통 발효식품이 아닌 것은?',
     choices: ['된장', '간장', '두부', '고추장'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '두부는 발효식품이 아니라 콩을 갈아 응고시켜 만든 식품입니다. 된장·간장·고추장은 모두 발효를 통해 만들어집니다.'
   },
   {
     id: 14, type: 'triple', difficulty: 1,
     question: '한국프로야구(KBO) 구단 수는?',
     choices: ['8개', '10개', '12개'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '2015년 kt wiz 창단으로 10구단 체제가 완성되었습니다. (두산·LG·삼성·KIA·롯데·SSG·키움·한화·NC·kt)'
   },
   {
     id: 15, type: 'multiple', difficulty: 1,
     question: '한국의 전통 악기 가야금은 어떤 종류의 악기인가?',
     choices: ['관악기', '타악기', '현악기', '성악기'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '가야금은 가야국 가실왕이 만들었다고 전해지는 현악기로, 12줄(정악 가야금) 또는 25줄(산조 가야금)이 있습니다.'
   },
   {
     id: 16, type: 'multiple', difficulty: 1,
     question: '대한민국 헌법에서 정한 대통령 임기는?',
     choices: ['4년', '5년', '6년', '7년'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '대한민국 대통령 임기는 5년 단임제입니다. 장기 독재를 방지하기 위해 1987년 헌법 개정 시 도입되었습니다.'
   },
   {
     id: 17, type: 'multiple', difficulty: 1,
     question: '한국 최초의 노벨상 수상자는?',
     choices: ['이희호', '김대중', '박정희', '김영삼'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '김대중 전 대통령이 2000년 노벨평화상을 수상했습니다. 민주주의 발전과 남북화해 기여로 수상했으며, 현재까지 한국 유일의 노벨상 수상자입니다.'
   },
   {
     id: 18, type: 'multiple', difficulty: 1,
     question: '태권도가 올림픽 정식 종목이 된 해는?',
     choices: ['1988년', '1992년', '1996년', '2000년'],
-    answer: 3, timeLimit: 20,
+    answer: 3, timeLimit: 15,
     explanation: '태권도는 2000년 시드니 올림픽에서 처음으로 정식 종목이 되었습니다. 1988년 서울·1992년 바르셀로나 올림픽에서는 시범 종목이었습니다.'
   },
   {
     id: 19, type: 'multiple', difficulty: 1,
     question: '한국의 국보 1호는?',
     choices: ['석굴암', '경복궁 근정전', '숭례문(남대문)', '첨성대'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '숭례문(남대문)이 국보 1호입니다. 2008년 화재로 소실되었다가 2013년 복원되었습니다. 참고로 2021년 "국보 1호" 호칭 제도 자체가 폐지되었습니다.'
   },
   {
     id: 20, type: 'ox', difficulty: 1,
     question: '세종대왕의 얼굴이 그려진 지폐는 1만 원권이다.',
     choices: ['O', 'X'],
-    answer: 0, timeLimit: 20,
+    answer: 0, timeLimit: 15,
     explanation: '세종대왕은 1만 원권 지폐의 인물입니다. 5천 원권은 율곡 이이, 1천 원권은 퇴계 이황, 5만 원권은 신사임당입니다.'
   },
 
@@ -155,140 +155,140 @@ module.exports = [
     id: 21, type: 'multiple', difficulty: 2,
     question: '한국 역대 최다 관객을 기록한 영화는?',
     choices: ['극한직업', '신과함께: 죄와 벌', '명량', '어벤져스: 엔드게임'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '명량(2014, 김한민 감독)은 약 1,761만 명을 동원하며 한국 역대 박스오피스 1위입니다. 2위는 극한직업(약 1,627만 명)입니다.'
   },
   {
     id: 22, type: 'multiple', difficulty: 2,
     question: 'BTS가 빌보드 HOT 100에서 처음으로 1위를 차지한 곡은?',
     choices: ['DNA', 'Boy With Luv', 'Dynamite', 'Butter'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: 'Dynamite(2020년 8월)는 BTS 최초의 전곡 영어 싱글로, 빌보드 HOT 100 1위를 기록한 한국 가수 최초의 곡입니다.'
   },
   {
     id: 23, type: 'multiple', difficulty: 2,
     question: '한국 월드컵 역사 최고 성적은?',
     choices: ['16강', '8강', '4강', '준우승'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '2002년 한일 월드컵에서 히딩크 감독 지휘 하에 폴란드·미국·포르투갈·스페인·독일을 차례로 꺾고 사상 첫 4강에 진출했습니다.'
   },
   {
     id: 24, type: 'multiple', difficulty: 2,
     question: '영화 "기생충"으로 아카데미 감독상을 받은 사람은?',
     choices: ['이창동', '박찬욱', '봉준호', '홍상수'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '봉준호 감독의 기생충(2019)은 칸 황금종려상에 이어 아카데미 작품상·감독상·각본상·국제영화상 4관왕 달성, 비영어권 최초 아카데미 작품상 수상작이 되었습니다.'
   },
   {
     id: 25, type: 'multiple', difficulty: 2,
     question: '싸이의 강남스타일이 유튜브 최초로 10억 뷰를 돌파한 해는?',
     choices: ['2011년', '2012년', '2013년', '2014년'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '강남스타일은 2012년 유튜브 최초로 10억 뷰를 돌파했습니다. 한때 유튜브 역대 최다 조회수를 기록했으며 현재 약 51억 뷰를 보유 중입니다.'
   },
   {
     id: 26, type: 'multiple', difficulty: 2,
     question: '손흥민이 EPL 아시아 선수 최초로 득점왕을 차지한 시즌은?',
     choices: ['2019-20', '2020-21', '2021-22', '2022-23'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '손흥민은 2021-22 시즌 살라와 공동 23골로 EPL 득점왕(골든부트)을 차지했습니다. 아시아 선수 최초의 기록입니다.'
   },
   {
     id: 27, type: 'multiple', difficulty: 2,
     question: '한국 최초의 우주인은?',
     choices: ['박정훈', '이소연', '고산', '조광래'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '이소연은 2008년 4월 소유즈 우주선을 타고 국제우주정거장(ISS)에 10박 11일 체류한 한국 최초이자 유일한 우주인입니다.'
   },
   {
     id: 28, type: 'multiple', difficulty: 2,
     question: '조선시대 왕의 총 수는?',
     choices: ['23명', '25명', '27명', '29명'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '태조(1대)부터 순종(27대)까지 총 27명의 왕이 조선(1392-1910)을 통치했습니다.'
   },
   {
     id: 29, type: 'multiple', difficulty: 2,
     question: '임진왜란이 발발한 해는?',
     choices: ['1492년', '1592년', '1650년', '1712년'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '1592년(선조 25년) 도요토미 히데요시가 조선을 침략해 임진왜란이 발발했습니다. 이순신 장군의 활약으로 1598년 종결되었습니다.'
   },
   {
     id: 30, type: 'multiple', difficulty: 2,
     question: '박지성이 소속되었던 EPL 클럽은?',
     choices: ['아스날', '첼시', '맨체스터 유나이티드', '리버풀'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '박지성은 2005-2012년 맨체스터 유나이티드에서 활약했습니다. 아시아 선수 최초로 UEFA 챔피언스리그 우승(2008)을 경험했습니다.'
   },
   {
     id: 31, type: 'multiple', difficulty: 2,
     question: '한국이 FIFA 월드컵에 처음 출전한 해는?',
     choices: ['1954년', '1966년', '1974년', '1982년'],
-    answer: 0, timeLimit: 20,
+    answer: 0, timeLimit: 15,
     explanation: '한국은 1954년 스위스 월드컵에서 처음 본선에 출전했습니다. 헝가리에 0-9, 터키에 0-7로 대패했지만 아시아 최초의 월드컵 본선 진출이었습니다.'
   },
   {
     id: 32, type: 'multiple', difficulty: 2,
     question: '삼성전자를 창업한 사람은?',
     choices: ['이건희', '이재용', '이병철', '정주영'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '이병철(1910-1987)이 1938년 삼성상회를 창업했습니다. 삼성전자는 1969년 설립되었으며 이건희(2대)·이재용(현 회장)으로 이어졌습니다.'
   },
   {
     id: 33, type: 'ox', difficulty: 2,
     question: '독도는 행정구역상 경상북도 울릉군에 속한다.',
     choices: ['O', 'X'],
-    answer: 0, timeLimit: 20,
+    answer: 0, timeLimit: 15,
     explanation: '독도는 경상북도 울릉군 울릉읍 독도리에 속합니다. 동도·서도 및 89개 부속 도서로 이루어진 한국 영토의 동쪽 끝입니다.'
   },
   {
-    id: 34, type: 'multiple', difficulty: 2,
-    question: '한국의 광복절은 몇 월 며칠인가?',
-    choices: ['6월 25일', '7월 17일', '8월 15일', '10월 3일'],
-    answer: 2, timeLimit: 20,
-    explanation: '1945년 8월 15일 일제로부터 해방되어 광복절로 지정되었습니다. 같은 날 1948년 대한민국 정부가 수립되었습니다.'
+    id: 34, type: 'triple', difficulty: 2,
+    question: '"어떡해"와 "어떻해" 중 올바른 표기는?',
+    choices: ['어떡해', '어떻해', '둘 다 맞다'],
+    answer: 0, timeLimit: 15,
+    explanation: '"어떡해"가 맞습니다. "어떻게 하다"의 준말인 "어떡하다"의 활용형으로, "어떻해"는 존재하지 않는 표기입니다.'
   },
   {
     id: 35, type: 'multiple', difficulty: 2,
     question: '다음 중 유네스코 세계문화유산에 등재되지 않은 것은?',
     choices: ['석굴암·불국사', '창덕궁', '경복궁', '종묘'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '경복궁은 사적으로 지정되어 있지만 유네스코 세계문화유산에는 등재되지 않았습니다. 석굴암·불국사(1995)·창덕궁(1997)·종묘(1995) 등 16건이 등재되어 있습니다.'
   },
   {
     id: 36, type: 'multiple', difficulty: 2,
     question: '"아리랑"이 유네스코 인류무형문화유산에 등재된 해는?',
     choices: ['2003년', '2008년', '2012년', '2016년'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '아리랑은 2012년 유네스코 인류무형문화유산에 등재되었습니다. 전국에 60여 종의 아리랑이 전해지고 있습니다.'
   },
   {
     id: 37, type: 'multiple', difficulty: 2,
     question: '대한민국 올림픽 최초 금메달이 나온 대회는?',
     choices: ['1948 런던', '1964 도쿄', '1976 몬트리올', '1984 LA'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '1976년 몬트리올 올림픽 레슬링 자유형 62kg급에서 양정모 선수가 한국 최초의 올림픽 금메달을 획득했습니다.'
   },
   {
     id: 38, type: 'triple', difficulty: 2,
     question: '다음 중 이순신 장군의 대첩이 아닌 것은?',
     choices: ['한산도 대첩', '명량 대첩', '행주 대첩'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '행주 대첩은 권율 장군의 육상 전투입니다. 이순신 장군의 3대 해전은 한산도(1592)·명량(1597)·노량(1598)이며, 노량에서 전사했습니다.'
   },
   {
     id: 39, type: 'ox', difficulty: 2,
     question: '세종대왕의 훈민정음 창제 연도와 반포 연도는 같다.',
     choices: ['O', 'X'],
-    answer: 1, timeLimit: 20,
+    answer: 1, timeLimit: 15,
     explanation: '세종대왕은 1443년(세종 25년)에 훈민정음을 창제하고, 1446년(세종 28년)에 반포했습니다. 한글날(10월 9일)은 반포일을 기념합니다.'
   },
   {
     id: 40, type: 'multiple', difficulty: 2,
     question: '한국의 "포항"에 있는 세계 최대 규모(단일 사업장)의 시설은?',
     choices: ['조선소', '반도체 공장', '제철소', '석유화학 단지'],
-    answer: 2, timeLimit: 20,
+    answer: 2, timeLimit: 15,
     explanation: '포스코(POSCO) 포항 제철소는 단일 사업장 기준 세계 최대 규모의 제철소입니다. 1973년 첫 쇳물 생산 이래 한국 중공업 발전의 핵심 역할을 해왔습니다.'
   },
 
@@ -339,10 +339,10 @@ module.exports = [
   },
   {
     id: 47, type: 'multiple', difficulty: 3,
-    question: '한국이 외환위기(IMF) 극복에 기여한 국민 운동은?',
-    choices: ['금 모으기 운동', '저축 장려 운동', '외래어 추방 운동', '한복 입기 운동'],
-    answer: 0, timeLimit: 15,
-    explanation: '1997~98년 외환위기 때 국민들이 자발적으로 금붙이를 모아 약 227톤(약 22억 달러 상당)을 헌납한 금 모으기 운동은 한국의 빠른 IMF 극복에 크게 기여했습니다.'
+    question: '세계에서 가장 오래된 생수 브랜드는?',
+    choices: ['산펠레그리노', '볼빅', '페리에', '에비앙'],
+    answer: 3, timeLimit: 15,
+    explanation: '에비앙(Evian)은 1826년 프랑스 알프스 에비앙레벵에서 처음 판매를 시작해 세계에서 가장 오래된 생수 브랜드입니다. 페리에 1863년, 산펠레그리노 1899년 순입니다.'
   },
   {
     id: 48, type: 'multiple', difficulty: 3,
@@ -352,11 +352,11 @@ module.exports = [
     explanation: '박세리는 1998년 US 여자오픈에서 맨발의 투혼을 보이며 우승, 외환위기로 침체된 한국에 큰 감동을 주었습니다. 한국 여자골프 붐의 시초가 되었습니다.'
   },
   {
-    id: 49, type: 'multiple', difficulty: 3,
-    question: '"신사임당"의 얼굴이 그려진 지폐의 액면가는?',
-    choices: ['1,000원', '5,000원', '10,000원', '50,000원'],
-    answer: 3, timeLimit: 15,
-    explanation: '신사임당(1504-1551)은 5만 원권 지폐의 인물입니다. 아들 율곡 이이는 5,000원권, 퇴계 이황은 1,000원권, 세종대왕은 10,000원권입니다.'
+    id: 49, type: 'ox', difficulty: 3,
+    question: '"바나나는 나무에서 자란다" — 이 말은 맞는가?',
+    choices: ['O', 'X'],
+    answer: 1, timeLimit: 15,
+    explanation: '바나나는 나무가 아닌 풀(초본식물)에서 자랍니다. 줄기처럼 보이는 부분은 잎자루가 겹쳐진 "가짜 줄기"로, 바나나는 세계에서 가장 큰 풀 중 하나입니다.'
   },
   {
     id: 50, type: 'multiple', difficulty: 3,
@@ -374,10 +374,10 @@ module.exports = [
   },
   {
     id: 52, type: 'multiple', difficulty: 3,
-    question: '"동의보감"을 편찬한 조선의 의관은?',
-    choices: ['장영실', '허준', '정약용', '김정호'],
+    question: '다음 중 올바른 맞춤법은?',
+    choices: ['설레임', '설렘', '설래임', '설래'],
     answer: 1, timeLimit: 15,
-    explanation: '허준(1539-1615)이 편찬한 동의보감(1613)은 조선 최대의 의학서로 2009년 유네스코 세계기록유산에 등재되었습니다.'
+    explanation: '"설렘"이 표준어입니다. 롯데 아이스크림 "설레임"은 상품명이라 예외이지만, 일상에서는 "설레다"의 명사형인 "설렘"이 맞습니다.'
   },
   {
     id: 53, type: 'multiple', difficulty: 3,
@@ -441,10 +441,10 @@ module.exports = [
   // ══════════════════════════════════════════════
   {
     id: 61, type: 'multiple', difficulty: 4,
-    question: '한국 역대 박스오피스 2위 영화는? (2024년 기준)',
-    choices: ['신과함께: 죄와 벌', '극한직업', '아바타', '겨울왕국 2'],
-    answer: 1, timeLimit: 15,
-    explanation: '극한직업(2019, 이병헌 감독)은 약 1,627만 명을 동원하며 2위입니다. 1위 명량(약 1,761만 명), 3위 신과함께(약 1,441만 명)입니다.'
+    question: '나폴레옹의 실제 키는?',
+    choices: ['약 140cm', '약 152cm', '약 168cm', '약 180cm'],
+    answer: 2, timeLimit: 15,
+    explanation: '나폴레옹의 실제 키는 약 168~169cm로 당시 프랑스 남성 평균(164cm)보다 오히려 컸습니다. "작은 나폴레옹" 이미지는 영국의 선전과 프랑스·영국 단위 오역에서 비롯된 오해입니다.'
   },
   {
     id: 62, type: 'multiple', difficulty: 4,
@@ -585,10 +585,10 @@ module.exports = [
   // ══════════════════════════════════════════════
   {
     id: 81, type: 'multiple', difficulty: 5,
-    question: '한국 역대 박스오피스 3위 영화는? (2024년 기준)',
-    choices: ['신과함께: 죄와 벌', '어벤져스: 엔드게임', '겨울왕국 2', '범죄도시 3'],
-    answer: 0, timeLimit: 12,
-    explanation: '"신과함께: 죄와 벌"(2017, 김용화 감독)은 약 1,441만 명 동원으로 3위입니다. 1위 명량(1,761만) → 2위 극한직업(1,627만) → 3위 신과함께(1,441만) 순입니다.'
+    question: '"금세"와 "금새" 중 "곧, 바로"의 뜻으로 올바른 표기는?',
+    choices: ['금새 돌아올게', '금세 돌아올게', '둘 다 맞다', '둘 다 틀리다'],
+    answer: 1, timeLimit: 12,
+    explanation: '"금세"가 맞습니다. "금시에(今時에)"의 준말로 "곧, 바로"를 뜻합니다. "금새"는 "물건의 값"을 뜻하는 전혀 다른 단어로, 혼동하는 사람이 매우 많습니다.'
   },
   {
     id: 82, type: 'multiple', difficulty: 5,
@@ -599,10 +599,10 @@ module.exports = [
   },
   {
     id: 83, type: 'multiple', difficulty: 5,
-    question: '조선 시대 "장영실"이 만든 것이 아닌 것은?',
-    choices: ['자격루(물시계)', '앙부일구(해시계)', '측우기', '거북선'],
-    answer: 3, timeLimit: 12,
-    explanation: '거북선은 이순신 장군이 임진왜란(1592) 때 활용한 전투함입니다. 장영실은 자격루(1434)·앙부일구·혼천의 등을 만든 세종 시대 최고의 과학자입니다.'
+    question: '소설 "프랑켄슈타인"에서 "프랑켄슈타인"은 누구의 이름인가?',
+    choices: ['괴물의 이름', '창조자 박사의 이름', '괴물의 조수 이름', '배경 마을 이름'],
+    answer: 1, timeLimit: 12,
+    explanation: '프랑켄슈타인은 괴물을 만든 "빅터 프랑켄슈타인 박사"의 성(姓)입니다. 괴물에게는 이름이 없습니다. 메리 셸리의 1818년 소설에서 비롯된 대표적인 착각입니다.'
   },
   {
     id: 84, type: 'multiple', difficulty: 5,
@@ -620,10 +620,10 @@ module.exports = [
   },
   {
     id: 86, type: 'multiple', difficulty: 5,
-    question: '한국 최초의 영화는 언제 처음 상영되었나?',
-    choices: ['1903년', '1913년', '1919년', '1926년'],
-    answer: 0, timeLimit: 12,
-    explanation: '한국에서 영화는 1903년 동대문 광장에서 처음 상영되었습니다. 한국 최초의 극영화는 1919년 상영된 "의리적 구토"(김도산 감독)입니다.'
+    question: '아인슈타인에 대한 잘못 알려진 상식은?',
+    choices: ['상대성이론을 만들었다', '노벨 물리학상을 받았다', '어릴 때 수학을 못했다', '유대계 독일인이다'],
+    answer: 2, timeLimit: 12,
+    explanation: '아인슈타인이 수학을 못했다는 것은 잘못된 상식입니다. 그는 12세에 대수학·미적분을 독학한 수학 천재였습니다. 이 오해는 스위스와 미국의 성적 표기 방식 차이에서 비롯됐습니다.'
   },
   {
     id: 87, type: 'multiple', difficulty: 5,
@@ -655,10 +655,10 @@ module.exports = [
   },
   {
     id: 91, type: 'multiple', difficulty: 5,
-    question: '"조선왕조 의궤"가 프랑스에서 돌아온 해는?',
-    choices: ['2001년', '2006년', '2011년', '2016년'],
-    answer: 2, timeLimit: 12,
-    explanation: '병인양요(1866) 때 프랑스 군에 약탈된 외규장각 의궤 297책이 2011년 5년 단위 임대 형식으로 한국에 반환되었습니다. 영구 반환이 아닌 대여 형식이 문제로 남아 있습니다.'
+    question: '"며칠"과 "몇일" 중 올바른 맞춤법 표기는?',
+    choices: ['며칠', '몇일', '둘 다 맞다', '둘 다 틀리다'],
+    answer: 0, timeLimit: 15,
+    explanation: '"며칠"이 올바른 표기입니다. "몇 일(日)"로 쓰고 싶어도 표준어 규정상 "며칠"만 인정됩니다. 한국인이 가장 많이 틀리는 맞춤법 중 하나입니다.'
   },
   {
     id: 92, type: 'multiple', difficulty: 5,
@@ -710,11 +710,11 @@ module.exports = [
     explanation: '삼국유사의 기록에 따르면 단군왕검이 기원전 2333년 고조선을 건국했습니다. 이 날을 기념하는 개천절은 10월 3일로, 대한민국 국경일입니다.'
   },
   {
-    id: 99, type: 'multiple', difficulty: 5,
-    question: '"세계 4대 문명" 중 한반도와 가장 가까웠던 문명은?',
-    choices: ['이집트 문명', '메소포타미아 문명', '인더스 문명', '황하 문명'],
-    answer: 3, timeLimit: 12,
-    explanation: '황하 문명(중국 문명)은 한반도와 지리적으로 가장 가까운 4대 문명입니다. 청동기·철기·한자·유교 등 다양한 문화가 황하 문명을 통해 한반도에 전파되었습니다.'
+    id: 99, type: 'ox', difficulty: 5,
+    question: '"코알라는 곰의 일종이다" — 이 말은 맞는가?',
+    choices: ['O', 'X'],
+    answer: 1, timeLimit: 15,
+    explanation: '코알라는 곰이 아닌 유대류입니다. 영어 이름 "Koala Bear"에서 비롯된 오해로, 코알라는 캥거루처럼 새끼를 주머니에 키우는 유대류입니다.'
   },
   {
     id: 100, type: 'multiple', difficulty: 5,
