@@ -84,22 +84,33 @@ html, body {
 .logo-text { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .logo-sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
 
-.join-form { display: flex; flex-direction: column; gap: 12px; }
-.join-form input {
-  padding: 16px;
-  font-size: 17px;
+.join-form { display: flex; flex-direction: column; gap: 14px; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 13px; font-weight: 700; color: var(--accent2); letter-spacing: 0.3px; }
+.form-hint { color: var(--muted); font-weight: 400; font-size: 12px; }
+
+.form-select, .form-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
   border-radius: var(--radius);
   border: 2px solid #3d3680;
   background: var(--bg2);
   color: var(--text);
-  text-align: center;
   outline: none;
   transition: border-color 0.2s;
+  font-family: inherit;
 }
-.join-form input:focus { border-color: var(--accent2); }
+.form-select { appearance: none; -webkit-appearance: none; cursor: pointer; }
+.form-select option, .form-select optgroup { background: #1a1640; color: var(--text); }
+.form-input { text-align: left; }
+.form-input.pw-input { text-align: center; letter-spacing: 8px; font-size: 22px; font-weight: 700; }
+.form-select:focus, .form-input:focus { border-color: var(--accent2); }
 
 .lobby-info { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .lobby-badge { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid var(--green); border-radius: 24px; padding: 6px 18px; font-size: 15px; font-weight: 700; }
+.my-name-display { font-size: 20px; font-weight: 800; }
 .waiting-text { color: var(--muted); font-size: 15px; }
 .player-count { font-size: 24px; font-weight: 800; color: var(--gold); }
 .heart-display { display: flex; align-items: center; gap: 8px; font-size: 16px; }

@@ -1,3 +1,7 @@
 node_modules/
 .env
 *.log
+employees.json
+*.xlsx
+*.xls
+.claude/

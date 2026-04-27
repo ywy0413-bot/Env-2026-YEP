@@ -4,44 +4,62 @@ const { Server } = require('socket.io');
 const path = require('path');
 const questions = require('./questions');
 
+let employees = [];
+try {
+  employees = require('./employees.json');
+} catch {
+  console.warn('⚠️  employees.json 없음 — 인증 없이 실행됩니다.');
+}
+
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: { origin: '*' },
-});
+const io = new Server(server, { cors: { origin: '*' } });
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+
+// ─── 임직원 목록 API (비밀번호 제외) ───────────────────────────
+app.get('/api/employees', (req, res) => {
+  res.json(employees.map(({ id, name, group }) => ({ id, name, group })));
+});
 
 // ─── 게임 상태 ───────────────────────────────────────────────
 const INITIAL_HEARTS = 1;
 
 let game = {
-  status: 'waiting',      // waiting | countdown | question | revealing | finished
-  players: {},            // socketId -> playerData
+  status: 'waiting',   // waiting | countdown | question | revealing | finished
+  players: {},         // employeeId -> playerData
+  socketToEmp: {},     // socketId  -> employeeId
   currentIndex: -1,
   questionStartTime: null,
   revealData: null,
+  finishedData: null,
   countdownTimer: null,
   questionTimer: null,
 };
 
-function createPlayer(nickname, socketId) {
+function createPlayer(nickname, socketId, employeeId) {
   return {
-    id: socketId,
+    employeeId,
+    socketId,
     nickname,
     alive: true,
     hearts: INITIAL_HEARTS,
     score: 0,
-    answered: null,       // null | choice index
+    answered: null,
     answeredAt: null,
     eliminated: false,
   };
 }
 
+function getPlayerBySocket(socketId) {
+  const empId = game.socketToEmp[socketId];
+  return empId != null ? game.players[empId] : null;
+}
+
 function getPublicPlayers() {
   return Object.values(game.players).map(p => ({
-    id: p.id,
+    id: p.employeeId,
     nickname: p.nickname,
     alive: p.alive,
     hearts: p.hearts,
@@ -65,7 +83,46 @@ function getLobbyStats() {
 
 function clearTimers() {
   if (game.countdownTimer) { clearInterval(game.countdownTimer); game.countdownTimer = null; }
-  if (game.questionTimer) { clearTimeout(game.questionTimer); game.questionTimer = null; }
+  if (game.questionTimer)  { clearTimeout(game.questionTimer);  game.questionTimer  = null; }
+}
+
+// ─── 플레이어에게 현재 상태 전송 (재연결용) ──────────────────
+function pushCurrentState(socket, player) {
+  if (game.status === 'waiting') return;
+
+  if (game.status === 'countdown') {
+    socket.emit('game:start', { totalQuestions: questions.length });
+    return;
+  }
+
+  if (game.status === 'question') {
+    const q = questions[game.currentIndex];
+    socket.emit('game:question', {
+      index: game.currentIndex,
+      total: questions.length,
+      type: q.type,
+      question: q.question,
+      choices: q.choices,
+      timeLimit: q.timeLimit,
+      aliveCount: getAlivePlayers().length,
+      elapsed: Math.floor((Date.now() - game.questionStartTime) / 1000),
+    });
+    if (player.answered !== null) {
+      socket.emit('answer:confirmed', { choice: player.answered });
+    }
+    if (!player.alive) socket.emit('player:eliminated');
+    return;
+  }
+
+  if (game.status === 'revealing') {
+    socket.emit('game:reveal', game.revealData);
+    if (!player.alive) socket.emit('player:eliminated');
+    return;
+  }
+
+  if (game.status === 'finished') {
+    socket.emit('game:finished', game.finishedData);
+  }
 }
 
 // ─── 게임 로직 ───────────────────────────────────────────────
@@ -74,7 +131,6 @@ function startGame() {
   game.status = 'countdown';
   game.currentIndex = -1;
 
-  // 모든 플레이어 초기화
   Object.values(game.players).forEach(p => {
     p.alive = true;
     p.hearts = INITIAL_HEARTS;
@@ -86,7 +142,6 @@ function startGame() {
 
   io.emit('game:start', { totalQuestions: questions.length });
 
-  // 3초 카운트다운 후 첫 문제
   let count = 3;
   io.emit('game:countdown', { count });
   game.countdownTimer = setInterval(() => {
@@ -104,13 +159,7 @@ function startGame() {
 function nextQuestion() {
   game.currentIndex++;
 
-  if (game.currentIndex >= questions.length) {
-    endGame();
-    return;
-  }
-
-  // 생존자가 없으면 게임 종료
-  if (getAlivePlayers().length === 0) {
+  if (game.currentIndex >= questions.length || getAlivePlayers().length === 0) {
     endGame();
     return;
   }
@@ -120,13 +169,12 @@ function nextQuestion() {
   game.questionStartTime = Date.now();
   game.revealData = null;
 
-  // 각 플레이어의 답변 초기화
   Object.values(game.players).forEach(p => {
     p.answered = null;
     p.answeredAt = null;
   });
 
-  const questionPayload = {
+  const payload = {
     index: game.currentIndex,
     total: questions.length,
     type: q.type,
@@ -134,14 +182,12 @@ function nextQuestion() {
     choices: q.choices,
     timeLimit: q.timeLimit,
     aliveCount: getAlivePlayers().length,
+    elapsed: 0,
   };
 
-  io.emit('game:question', questionPayload);
+  io.emit('game:question', payload);
 
-  // 타이머 종료 후 자동 채점
-  game.questionTimer = setTimeout(() => {
-    revealAnswer();
-  }, q.timeLimit * 1000);
+  game.questionTimer = setTimeout(revealAnswer, q.timeLimit * 1000);
 }
 
 function revealAnswer() {
@@ -150,8 +196,6 @@ function revealAnswer() {
 
   const q = questions[game.currentIndex];
   const correctIndex = q.answer;
-  const now = Date.now();
-
   const results = {};
   const eliminated = [];
   const revived = [];
@@ -160,28 +204,22 @@ function revealAnswer() {
     if (!p.alive) return;
 
     const correct = p.answered === correctIndex;
-
     if (correct) {
-      // 빠른 답변 보너스 (최대 500점 + 기본 1000점)
       const elapsed = p.answeredAt ? (p.answeredAt - game.questionStartTime) : (q.timeLimit * 1000);
       const speedBonus = Math.max(0, Math.floor(500 * (1 - elapsed / (q.timeLimit * 1000))));
       p.score += 1000 + speedBonus;
     } else {
-      // 오답 처리
       if (p.hearts > 0) {
         p.hearts--;
-        revived.push({ id: p.id, nickname: p.nickname });
+        revived.push({ id: p.employeeId, nickname: p.nickname });
       } else {
         p.alive = false;
         p.eliminated = true;
-        eliminated.push({ id: p.id, nickname: p.nickname });
+        eliminated.push({ id: p.employeeId, nickname: p.nickname });
       }
     }
-
-    results[p.id] = { correct, answered: p.answered };
+    results[p.employeeId] = { correct, answered: p.answered };
   });
-
-  const aliveCount = getAlivePlayers().length;
 
   game.revealData = {
     correctIndex,
@@ -189,27 +227,23 @@ function revealAnswer() {
     results,
     eliminated,
     revived,
-    aliveCount,
-    isLastQuestion: game.currentIndex === questions.length - 1,
+    aliveCount: getAlivePlayers().length,
   };
 
   io.emit('game:reveal', game.revealData);
 
-  // 탈락자에게 개인 알림
+  // 개인 알림
   eliminated.forEach(({ id }) => {
-    if (io.sockets.sockets.get(id)) {
-      io.to(id).emit('player:eliminated');
-    }
+    const p = game.players[id];
+    if (p) io.to(p.socketId).emit('player:eliminated');
   });
   revived.forEach(({ id }) => {
-    if (io.sockets.sockets.get(id)) {
-      io.to(id).emit('player:revived');
-    }
+    const p = game.players[id];
+    if (p) io.to(p.socketId).emit('player:revived');
   });
 
-  // 5초 후 다음 문제 또는 종료
   setTimeout(() => {
-    if (aliveCount === 0 || game.currentIndex === questions.length - 1) {
+    if (getAlivePlayers().length === 0 || game.currentIndex === questions.length - 1) {
       endGame();
     } else {
       nextQuestion();
@@ -223,32 +257,30 @@ function endGame() {
 
   const survivors = getAlivePlayers()
     .sort((a, b) => b.score - a.score)
-    .map((p, i) => ({ rank: i + 1, nickname: p.nickname, score: p.score, id: p.id }));
+    .map((p, i) => ({ rank: i + 1, nickname: p.nickname, score: p.score }));
 
   const allPlayers = Object.values(game.players)
     .sort((a, b) => b.score - a.score)
     .map((p, i) => ({ rank: i + 1, nickname: p.nickname, score: p.score, alive: p.alive }));
 
-  io.emit('game:finished', { survivors, allPlayers });
+  game.finishedData = { survivors, allPlayers };
+  io.emit('game:finished', game.finishedData);
 }
 
 function resetGame() {
   clearTimers();
   game.status = 'waiting';
   game.players = {};
+  game.socketToEmp = {};
   game.currentIndex = -1;
   game.questionStartTime = null;
   game.revealData = null;
+  game.finishedData = null;
   io.emit('game:reset');
 }
 
-// ─── Socket.io 이벤트 ─────────────────────────────────────────
+// ─── Socket.io ───────────────────────────────────────────────
 io.on('connection', (socket) => {
-  console.log(`[연결] ${socket.id}`);
-
-  // 어드민 확인
-  const isAdmin = socket.handshake.query.role === 'admin';
-
   // 현재 상태 전송
   socket.emit('game:state', {
     status: game.status,
@@ -258,103 +290,121 @@ io.on('connection', (socket) => {
     stats: getLobbyStats(),
   });
 
-  // ── 참가자: 닉네임 등록 ──
-  socket.on('player:join', ({ nickname }) => {
-    if (game.status !== 'waiting') {
-      socket.emit('join:error', { message: '게임이 이미 시작되었습니다.' });
-      return;
+  // ── 참가자 로그인 / 재연결 ──────────────────────────────────
+  socket.on('player:join', ({ employeeId, nickname, password }) => {
+    // 인증
+    const emp = employees.find(e => e.id === employeeId);
+    if (employees.length > 0) {
+      if (!emp) {
+        socket.emit('join:error', { message: '존재하지 않는 사용자입니다.' }); return;
+      }
+      if (emp.pw !== String(password)) {
+        socket.emit('join:error', { message: '비밀번호가 틀렸습니다.' }); return;
+      }
     }
-    if (!nickname || nickname.trim().length === 0) {
-      socket.emit('join:error', { message: '닉네임을 입력해주세요.' });
-      return;
-    }
-    const trimmed = nickname.trim().slice(0, 12);
-    const duplicate = Object.values(game.players).find(p => p.nickname === trimmed);
-    if (duplicate) {
-      socket.emit('join:error', { message: '이미 사용 중인 닉네임입니다.' });
+
+    // ── 재연결: 이미 게임에 참여 중인 플레이어 ──
+    if (game.players[employeeId]) {
+      const p = game.players[employeeId];
+
+      // 이전 소켓 매핑 해제
+      delete game.socketToEmp[p.socketId];
+      p.socketId = socket.id;
+      game.socketToEmp[socket.id] = employeeId;
+
+      socket.emit('join:success', {
+        nickname: p.nickname,
+        hearts: p.hearts,
+        alive: p.alive,
+        restored: true,
+      });
+
+      // 현재 게임 상태로 복원
+      pushCurrentState(socket, p);
+      console.log(`[재연결] ${p.nickname}`);
       return;
     }
 
-    game.players[socket.id] = createPlayer(trimmed, socket.id);
-    socket.emit('join:success', { nickname: trimmed, hearts: INITIAL_HEARTS });
+    // ── 신규 참가 ──
+    if (game.status !== 'waiting') {
+      socket.emit('join:error', { message: '게임이 이미 시작되었습니다.' }); return;
+    }
+
+    const trimmed = (nickname || '').trim().slice(0, 12);
+    if (!trimmed) {
+      socket.emit('join:error', { message: '닉네임을 입력해주세요.' }); return;
+    }
+    const dup = Object.values(game.players).find(p => p.nickname === trimmed);
+    if (dup) {
+      socket.emit('join:error', { message: '이미 사용 중인 닉네임입니다.' }); return;
+    }
+
+    game.players[employeeId] = createPlayer(trimmed, socket.id, employeeId);
+    game.socketToEmp[socket.id] = employeeId;
+
+    socket.emit('join:success', { nickname: trimmed, hearts: INITIAL_HEARTS, alive: true, restored: false });
     io.emit('lobby:update', { players: getPublicPlayers(), stats: getLobbyStats() });
-    console.log(`[참가] ${trimmed} (총 ${Object.keys(game.players).length}명)`);
+    console.log(`[참가] ${trimmed} (${emp?.name || employeeId}) — 총 ${Object.keys(game.players).length}명`);
   });
 
-  // ── 참가자: 답변 제출 ──
+  // ── 답변 제출 ───────────────────────────────────────────────
   socket.on('player:answer', ({ choice }) => {
-    const player = game.players[socket.id];
+    const player = getPlayerBySocket(socket.id);
     if (!player || !player.alive || game.status !== 'question') return;
-    if (player.answered !== null) return; // 이미 답변함
+    if (player.answered !== null) return;
     if (typeof choice !== 'number') return;
 
     player.answered = choice;
     player.answeredAt = Date.now();
-
-    // 본인에게만 확인 전송
     socket.emit('answer:confirmed', { choice });
 
-    // 어드민에게 답변 현황 업데이트
     const answeredCount = Object.values(game.players).filter(p => p.alive && p.answered !== null).length;
-    const aliveCount = getAlivePlayers().length;
-    io.emit('answer:progress', { answered: answeredCount, alive: aliveCount });
+    io.emit('answer:progress', { answered: answeredCount, alive: getAlivePlayers().length });
   });
 
-  // ── 어드민: 게임 시작 ──
+  // ── 어드민 명령 ─────────────────────────────────────────────
+  const ADMIN_PW = process.env.ADMIN_PW || 'admin1234';
+
   socket.on('admin:start', ({ password }) => {
-    if (password !== 'admin1234') {
-      socket.emit('admin:error', { message: '비밀번호가 틀렸습니다.' });
-      return;
-    }
-    if (game.status !== 'waiting') {
-      socket.emit('admin:error', { message: '게임이 이미 진행 중입니다.' });
-      return;
-    }
-    if (Object.keys(game.players).length === 0) {
-      socket.emit('admin:error', { message: '참가자가 없습니다.' });
-      return;
-    }
-    console.log('[어드민] 게임 시작');
+    if (password !== ADMIN_PW) { socket.emit('admin:error', { message: '비밀번호가 틀렸습니다.' }); return; }
+    if (game.status !== 'waiting') { socket.emit('admin:error', { message: '이미 진행 중입니다.' }); return; }
+    if (Object.keys(game.players).length === 0) { socket.emit('admin:error', { message: '참가자가 없습니다.' }); return; }
     startGame();
   });
 
-  // ── 어드민: 강제 다음 문제 ──
   socket.on('admin:next', ({ password }) => {
-    if (password !== 'admin1234') return;
-    if (game.status === 'question') {
-      revealAnswer();
-    } else if (game.status === 'revealing') {
+    if (password !== ADMIN_PW) return;
+    if (game.status === 'question') revealAnswer();
+    else if (game.status === 'revealing') {
       clearTimers();
-      if (getAlivePlayers().length === 0 || game.currentIndex === questions.length - 1) {
-        endGame();
-      } else {
-        nextQuestion();
-      }
+      if (getAlivePlayers().length === 0 || game.currentIndex === questions.length - 1) endGame();
+      else nextQuestion();
     }
   });
 
-  // ── 어드민: 게임 리셋 ──
   socket.on('admin:reset', ({ password }) => {
-    if (password !== 'admin1234') return;
-    console.log('[어드민] 게임 리셋');
+    if (password !== ADMIN_PW) return;
     resetGame();
   });
 
-  // ── 어드민: 문제 목록 요청 ──
   socket.on('admin:getQuestions', ({ password }) => {
-    if (password !== 'admin1234') return;
+    if (password !== ADMIN_PW) return;
     socket.emit('admin:questions', { questions });
   });
 
-  // ── 연결 해제 ──
+  // ── 연결 해제 ───────────────────────────────────────────────
   socket.on('disconnect', () => {
-    const player = game.players[socket.id];
-    if (player && game.status === 'waiting') {
-      delete game.players[socket.id];
-      io.emit('lobby:update', { players: getPublicPlayers(), stats: getLobbyStats() });
-      console.log(`[퇴장] ${player.nickname}`);
+    const player = getPlayerBySocket(socket.id);
+    if (player) {
+      if (game.status === 'waiting') {
+        delete game.players[player.employeeId];
+        io.emit('lobby:update', { players: getPublicPlayers(), stats: getLobbyStats() });
+        console.log(`[퇴장] ${player.nickname}`);
+      } else {
+        console.log(`[임시퇴장] ${player.nickname} — 재연결 대기`);
+      }
     }
-    console.log(`[해제] ${socket.id}`);
+    delete game.socketToEmp[socket.id];
   });
 });
 
@@ -367,16 +417,14 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🎮 퀴즈 라이브 서버 실행 중`);
   console.log(`   참가자: http://localhost:${PORT}`);
   console.log(`   어드민: http://localhost:${PORT}/admin.html`);
-  console.log(`   어드민 비밀번호: admin1234\n`);
+  console.log(`   임직원: ${employees.length}명 로드됨\n`);
 
-  // Render free tier sleep 방지: 14분마다 자기 자신에게 핑
   const selfUrl = process.env.RENDER_EXTERNAL_URL;
   if (selfUrl) {
     setInterval(() => {
       fetch(`${selfUrl}/health`)
         .then(() => console.log('[핑] keep-alive 성공'))
-        .catch(e => console.log('[핑] keep-alive 실패:', e.message));
+        .catch(e => console.log('[핑] 실패:', e.message));
     }, 14 * 60 * 1000);
-    console.log(`   Keep-alive 핑 활성화: ${selfUrl}/health`);
   }
 });
