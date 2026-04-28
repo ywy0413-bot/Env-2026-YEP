@@ -8,14 +8,14 @@ module.exports = [
   //  난이도 1: 매우 쉬움 (20문제)
   // ══════════════════════════════════════════════
   {
-    id: 1, type: 'multiple', difficulty: 1,
+    id: 1, type: 'multiple', difficulty: 3,
     question: '다음 중 한국에서 가장 먼저 출시된 라면은?',
     choices: ['신라면', '삼양라면', '짜파게티', '너구리'],
     answer: 1, timeLimit: 15,
     explanation: '삼양라면은 1963년 출시된 한국 최초의 라면입니다. 너구리는 1982년, 짜파게티는 1984년, 신라면은 1986년에 출시됐습니다.'
   },
   {
-    id: 2, type: 'multiple', difficulty: 1,
+    id: 2, type: 'multiple', difficulty: 3,
     question: '다음 중 한국에서 가장 먼저 출시된 과자는?',
     choices: ['초코파이', '새우깡', '포카칩', '빠다코코낫'],
     answer: 1, timeLimit: 15,
@@ -44,10 +44,10 @@ module.exports = [
   },
   {
     id: 6, type: 'multiple', difficulty: 1,
-    question: '한국의 전통 명절 추석은 음력 몇 월 며칠인가?',
-    choices: ['음력 1월 1일', '음력 5월 5일', '음력 7월 7일', '음력 8월 15일'],
-    answer: 3, timeLimit: 15,
-    explanation: '추석(한가위)은 음력 8월 15일로, 한 해의 추수에 감사하는 한국 최대 명절 중 하나입니다.'
+    question: "'에비앙(Évian)' 생수는 어느 나라에서 생산되는가?",
+    choices: ['스위스', '프랑스', '이탈리아', '독일'],
+    answer: 1, timeLimit: 15,
+    explanation: '에비앙은 프랑스 알프스의 에비앙-레-뱅(Évian-les-Bains)에서 생산됩니다. 스위스 국경과 가까워 스위스 제품으로 착각하기 쉽지만 엄연한 프랑스 브랜드입니다.'
   },
   {
     id: 7, type: 'multiple', difficulty: 1,
@@ -99,11 +99,11 @@ module.exports = [
     explanation: '두부는 발효식품이 아니라 콩을 갈아 응고시켜 만든 식품입니다. 된장·간장·고추장은 모두 발효를 통해 만들어집니다.'
   },
   {
-    id: 14, type: 'triple', difficulty: 1,
-    question: '한국프로야구(KBO) 구단 수는?',
-    choices: ['8개', '10개', '12개'],
+    id: 14, type: 'multiple', difficulty: 1,
+    question: "'운명 교향곡'을 작곡한 음악가는?",
+    choices: ['모차르트', '베토벤', '바흐', '슈베르트'],
     answer: 1, timeLimit: 15,
-    explanation: '2015년 kt wiz 창단으로 10구단 체제가 완성되었습니다. (두산·LG·삼성·KIA·롯데·SSG·키움·한화·NC·kt)'
+    explanation: "베토벤의 교향곡 5번 '운명'은 그 유명한 '빠빠빠 빰' 네 음으로 시작합니다. 청각을 잃어가던 시기인 1808년에 완성됐습니다."
   },
   {
     id: 15, type: 'multiple', difficulty: 1,
@@ -188,10 +188,10 @@ module.exports = [
   },
   {
     id: 26, type: 'multiple', difficulty: 2,
-    question: '손흥민이 EPL 아시아 선수 최초로 득점왕을 차지한 시즌은?',
-    choices: ['2019-20', '2020-21', '2021-22', '2022-23'],
-    answer: 2, timeLimit: 15,
-    explanation: '손흥민은 2021-22 시즌 살라와 공동 23골로 EPL 득점왕(골든부트)을 차지했습니다. 아시아 선수 최초의 기록입니다.'
+    question: "'오비이락(烏飛梨落)'의 뜻으로 올바른 것은?",
+    choices: ['까마귀 날자 배 떨어진다', '좋은 일엔 항상 마가 낀다', '쥐구멍에도 볕들 날 있다', '호랑이 없는 골엔 토끼가 왕'],
+    answer: 0, timeLimit: 15,
+    explanation: "오비이락(烏飛梨落)은 '까마귀가 날자 배가 떨어진다'는 뜻으로, 두 일이 우연히 겹쳐 억울하게 의심받는 상황을 의미합니다. 영어의 'guilt by association'과 유사합니다."
   },
   {
     id: 27, type: 'multiple', difficulty: 2,
@@ -216,10 +216,10 @@ module.exports = [
   },
   {
     id: 30, type: 'multiple', difficulty: 2,
-    question: '박지성이 소속되었던 EPL 클럽은?',
-    choices: ['아스날', '첼시', '맨체스터 유나이티드', '리버풀'],
+    question: '피카소가 태어난 나라는?',
+    choices: ['프랑스', '이탈리아', '스페인', '포르투갈'],
     answer: 2, timeLimit: 15,
-    explanation: '박지성은 2005-2012년 맨체스터 유나이티드에서 활약했습니다. 아시아 선수 최초로 UEFA 챔피언스리그 우승(2008)을 경험했습니다.'
+    explanation: '파블로 피카소는 1881년 스페인 말라가에서 태어났습니다. 파리에서 주로 활동해 프랑스 화가로 오해하기 쉽지만 평생 스페인 국적을 유지했습니다.'
   },
   {
     id: 31, type: 'multiple', difficulty: 2,
@@ -332,10 +332,10 @@ module.exports = [
   },
   {
     id: 46, type: 'multiple', difficulty: 3,
-    question: '블랙핑크(BLACKPINK)의 데뷔 연도는?',
-    choices: ['2014년', '2015년', '2016년', '2017년'],
-    answer: 2, timeLimit: 15,
-    explanation: '블랙핑크는 2016년 8월 YG엔터테인먼트에서 데뷔했습니다. 지수·제니·로제·리사 4명으로 구성됩니다.'
+    question: "'와신상담(臥薪嘗膽)'에서 쓸개를 핥으며 복수를 다짐한 인물은?",
+    choices: ['오왕 부차(夫差)', '월왕 구천(句踐)', '진시황(秦始皇)', '초패왕 항우(項羽)'],
+    answer: 1, timeLimit: 15,
+    explanation: "와신상담은 오나라 왕 부차가 섶나무 위에서 자며(臥薪) 원수를 잊지 않고, 패배한 월나라 왕 구천이 쓸개를 핥으며(嘗膽) 복수를 다짐한 고사입니다. 결국 구천이 승리했습니다."
   },
   {
     id: 47, type: 'multiple', difficulty: 3,
@@ -441,10 +441,10 @@ module.exports = [
   // ══════════════════════════════════════════════
   {
     id: 61, type: 'multiple', difficulty: 4,
-    question: '나폴레옹의 실제 키는?',
-    choices: ['약 140cm', '약 152cm', '약 168cm', '약 180cm'],
-    answer: 2, timeLimit: 15,
-    explanation: '나폴레옹의 실제 키는 약 168~169cm로 당시 프랑스 남성 평균(164cm)보다 오히려 컸습니다. "작은 나폴레옹" 이미지는 영국의 선전과 프랑스·영국 단위 오역에서 비롯된 오해입니다.'
+    question: '베토벤이 완전히 청력을 잃은 상태에서 완성한 교향곡은?',
+    choices: ['5번 운명', '6번 전원', '8번', '9번 합창'],
+    answer: 3, timeLimit: 15,
+    explanation: "베토벤은 9번 교향곡 '합창'(1824)을 완전히 청각을 잃은 채 완성했습니다. 초연 때 청중의 기립박수를 듣지 못하자 소프라노 가수가 그를 돌려세웠다는 일화가 유명합니다."
   },
   {
     id: 62, type: 'multiple', difficulty: 4,
@@ -518,10 +518,10 @@ module.exports = [
   },
   {
     id: 72, type: 'multiple', difficulty: 4,
-    question: '한국 가요 역사상 멜론 누적 스트리밍 최초 10억 회 돌파 곡은?',
-    choices: ['롤린(브레이브걸스)', '좋아(박재범)', '눈의꽃(박효신)', '사랑을 했다(아이콘)'],
-    answer: 0, timeLimit: 15,
-    explanation: '"롤린"(브레이브걸스, 2017)은 발매 4년 만인 2021년 역주행 열풍으로 멜론 역대 최초 10억 스트리밍 곡이 되었습니다.'
+    question: '경매에서 역대 가장 비싸게 팔린 그림은?',
+    choices: ['모나리자 (다빈치)', '살바토르 문디 (다빈치)', '별이 빛나는 밤 (반 고흐)', '게르니카 (피카소)'],
+    answer: 1, timeLimit: 15,
+    explanation: "레오나르도 다빈치의 '살바토르 문디(세계의 구원자)'는 2017년 경매에서 약 4억 5천만 달러(약 5,900억 원)에 낙찰됐습니다. 모나리자는 루브르 박물관 소장으로 경매에 나온 적이 없습니다."
   },
   {
     id: 73, type: 'multiple', difficulty: 4,
@@ -697,10 +697,10 @@ module.exports = [
   },
   {
     id: 97, type: 'multiple', difficulty: 5,
-    question: '"이산가족 찾기" 방송이 KBS에서 생방송된 해는?',
-    choices: ['1975년', '1983년', '1988년', '1993년'],
-    answer: 1, timeLimit: 12,
-    explanation: '1983년 6월 30일부터 11월 14일까지 138일간 방송된 KBS "이산가족을 찾습니다"는 세계 최장 생방송으로 기네스북에 등재되었습니다. 2015년 유네스코 세계기록유산에 등재되었습니다.'
+    question: '반 고흐가 자른 신체 부위에 관한 설명으로 올바른 것은?',
+    choices: ['오른쪽 귀 전체', '왼쪽 귀 전체', '오른쪽 귓불만', '왼쪽 귓불만'],
+    answer: 3, timeLimit: 15,
+    explanation: '반 고흐는 1888년 왼쪽 귓불 일부만 잘랐습니다. 귀 전체를 잘랐다고 알려졌지만 사실이 아니며, 오른쪽이 아닌 왼쪽입니다. 고갱과의 다툼 후 발생한 사건으로 잘린 귓불은 인근 여성에게 전달됐습니다.'
   },
   {
     id: 98, type: 'multiple', difficulty: 5,
